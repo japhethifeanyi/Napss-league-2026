@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Football Tournament Match Centre">
+  <title>⚽ Match Centre | Football Tournament</title>
+
+  <style>
+    :root {
+      --primary: #0b5d1e;
+      --primary-dark: #063d14;
+      --accent: #e63946;
+      --gold: #f4b400;
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --text: #17201a;
+      --muted: #68736c;
+      --border: #dfe6e1;
+      --danger: #c62828;
+      --success: #16803c;
+      --shadow: 0 6px 20px rgba(0,0,0,.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: white;
+      padding: 18px 5%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 3px 12px rgba(0,0,0,.2);
+    }
+
+    .nav {
+      max-width: 1250px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-size: 1.35rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    nav a {
+      padding: 8px 11px;
+      border-radius: 8px;
+      font-size: .88rem;
+    }
+
+    nav a:hover { background: rgba(255,255,255,.14); }
+
+    .hero {
+      background: linear-gradient(rgba(3,42,14,.82), rgba(3,42,14,.82)),
+                  url("https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1800&q=80")
+                  center/cover;
+      color: white;
+      text-align: center;
+      padding: 85px 20px;
+    }
+
+    .hero h1 { font-size: clamp(2.1rem, 5vw, 4rem); margin-bottom: 12px; }
+    .hero p { max-width: 760px; margin: auto; opacity: .92; }
+
+    .container {
+      max-width: 1250px;
+      margin: auto;
+      padding: 45px 20px;
+    }
+
+    section { scroll-margin-top: 90px; margin-bottom: 55px; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      color: var(--primary-dark);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    .match-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .live {
+      display: inline-block;
+      background: var(--danger);
+      color: white;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .teams {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 15px;
+      text-align: center;
+      margin: 18px 0;
+    }
+
+    .team { font-weight: 800; font-size: 1.1rem; }
+    .score { font-size: 2rem; font-weight: 900; }
+    .muted { color: var(--muted); font-size: .9rem; }
+
+    .btn {
+      display: inline-block;
+      border: 0;
+      background: var(--primary);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn:hover { background: var(--primary-dark); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    th, td {
+      padding: 13px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--primary);
+      color: white;
+    }
+
+    tr:hover td { background: #f0f6f2; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: .76rem;
+      font-weight: 700;
+      background: #e7f2ea;
+      color: var(--primary);
+    }
+
+    .red { color: var(--danger); font-weight: 800; }
+    .yellow { color: #a56b00; font-weight: 800; }
+
+    .media {
+      min-height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e9efeb;
+      border-radius: 12px;
+      font-size: 3rem;
+    }
+
+    .admin-card {
+      border-left: 5px solid var(--primary);
+    }
+
+    .private {
+      border-left: 5px solid var(--danger);
+      background: #fff8f8;
+    }
+
+    footer {
+      background: #071d0c;
+      color: white;
+      text-align: center;
+      padding: 35px 20px;
+      margin-top: 40px;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      background: #fff7df;
+      border: 1px solid #f1d78a;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid, .grid-2 { grid-template-columns: repeat(2, 1fr); }
+      .nav { flex-direction: column; }
+      nav { justify-content: center; }
+    }
+
+    @media (max-width: 600px) {
+      .grid, .grid-2 { grid-template-columns: 1fr; }
+      .hero { padding: 65px 18px; }
+      th, td { padding: 9px 7px; font-size: .84rem; }
+      .table-wrap { overflow-x: auto; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">⚽ Match Centre</div>
+    <nav>
+      <a href="#matches">Matches</a>
+      <a href="#table">League Table</a>
+      <a href="#stats">Statistics</a>
+      <a href="#awards">Awards</a>
+      <a href="#media">Media</a>
+      <a href="#news">News</a>
+      <a href="#rules">Rules</a>
+      <a href="#admin">Admin</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>⚽ Football Tournament Match Centre</h1>
+  <p>Fixtures, live scores, results, match events, statistics, awards, media, announcements and tournament administration.</p>
+</section>
+
+<main class="container">
+
+  <section id="matches">
+    <div class="section-title">
+      <h2>⚽ Match Centre</h2>
+      <span class="badge">Season 2026</span>
+    </div>
+
+    <div class="grid">
+      <div class="card match-card">
+        <span class="live">🔴 LIVE</span>
+        <h3>Match Day 1</h3>
+        <div class="teams">
+          <div class="team">Team A</div>
+          <div class="score">2 - 1</div>
+          <div class="team">Team B</div>
+        </div>
+        <p class="muted">📍 Main Stadium • 4:00 PM</p>
+        <p>⚽ 24' Team A • ⚽ 61' Team B • ⚽ 78' Team A</p>
+        <button class="btn" onclick="showMatchDetails('Match Day 1')">Match events</button>
+      </div>
+
+      <div class="card match-card">
+        <h3>📅 Next Fixture</h3>
+        <div class="teams">
+          <div class="team">Team C</div>
+          <div class="score">VS</div>
+          <div class="team">Team D</div>
+        </div>
+        <p class="muted">📍 Community Stadium</p>
+        <p class="muted">📅 Saturday, 29 August 2026 • 3:00 PM</p>
+        <p>👨🏽‍⚖️ Referee: To be announced</p>
+      </div>
+
+      <div class="card match-card">
+        <h3>🏁 Latest Result</h3>
+        <div class="teams">
+          <div class="team">Team E</div>
+          <div class="score">0 - 3</div>
+          <div class="team">Team F</div>
+        </div>
+        <p class="muted">📍 City Arena</p>
+        <p>🏆 Full time</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="fixtures">
+    <div class="section-title"><h2>📅 Fixtures</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Match</th><th>Venue</th><th>Kick-off</th><th>Officials</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>29 Aug</td><td>Team C vs Team D</td><td>Community Stadium</td><td>3:00 PM</td><td>To be announced</td></tr>
+          <tr><td>30 Aug</td><td>Team A vs Team E</td><td>Main Stadium</td><td>4:00 PM</td><td>To be announced</td></tr>
+          <tr><td>31 Aug</td><td>Team B vs Team F</td><td>City Arena</td><td>5:00 PM</td><td>To be announced</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="section-title"><h2>🏁 Results & Match Events</h2></div>
+    <div class="card">
+      <h3>Team E 0 - 3 Team F</h3>
+      <p>📍 City Arena | 🏁 Full Time</p>
+      <hr style="margin:15px 0;border:0;border-top:1px solid var(--border)">
+      <p>⚽ 12' Player F1</p>
+      <p>🟨 36' Player E2</p>
+      <p>⚽ 55' Player F3</p>
+      <p>🔄 67' Team E substitution</p>
+      <p>🟥 81' Player E4</p>
+      <p>⚽ 89' Player F5</p>
+    </div>
+  </section>
+
+  <section id="lineups">
+    <div class="section-title"><h2>👥 Line-ups</h2></div>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Team A</h3>
+        <p>1. Goalkeeper</p><p>2. Defender</p><p>3. Defender</p><p>4. Midfielder</p><p>5. Midfielder</p><p>6. Forward</p>
+      </div>
+      <div class="card">
+        <h3>Team B</h3>
+        <p>1. Goalkeeper</p><p>2. Defender</p><p>3. Defender</p><p>4. Midfielder</p><p>5. Midfielder</p><p>6. Forward</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="table">
+    <div class="section-title"><h2>📊 League Table</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Team F</td><td>3</td><td>3</td><td>0</td><td>0</td><td>8</td><td>2</td><td>+6</td><td><strong>9</strong></td></tr>
+          <tr><td>2</td><td>Team A</td><td>3</td><td>2</td><td>0</td><td>1</td><td>6</td><td>4</td><td>+2</td><td><strong>6</strong></td></tr>
+          <tr><td>3</td><td>Team B</td><td>3</td><td>1</td><td>1</td><td>1</td><td>4</td><td>4</td><td>0</td><td><strong>4</strong></td></tr>
+          <tr><td>4</td><td>Team C</td><td>2</td><td>0</td><td>1</td><td>1</td><td>2</td><td>4</td><td>-2</td><td><strong>1</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="stats">
+    <div class="section-title"><h2>📈 Player & Team Statistics</h2></div>
+    <div class="grid">
+      <div class="card"><h3>🥇 Top Scorers</h3><p>1. Player F1 — 7 goals</p><p>2. Player A2 — 5 goals</p><p>3. Player B3 — 4 goals</p></div>
+      <div class="card"><h3>🎯 Assists</h3><p>1. Player A2 — 6 assists</p><p>2. Player F4 — 5 assists</p><p>3. Player B1 — 4 assists</p></div>
+      <div class="card"><h3>🧤 Clean Sheets</h3><p>1. Player F1 — 3</p><p>2. Player A1 — 2</p><p>3. Player C1 — 1</p></div>
+      <div class="card"><h3>👤 Player Appearances</h3><p>Player F1 — 6</p><p>Player A2 — 6</p><p>Player B3 — 5</p></div>
+      <div class="card"><h3>📈 Team Statistics</h3><p>Possession</p><p>Goals</p><p>Shots on target</p><p>Pass accuracy</p><p>Cards</p></div>
+      <div class="card"><h3>📝 Match Events</h3><p>Goals • Cards • Substitutions • VAR • Penalties • Own goals</p></div>
+    </div>
+  </section>
+
+  <section id="awards">
+    <div class="section-title"><h2>🏆 Awards</h2></div>
+    <div class="grid">
+      <div class="card"><h3>⭐ Match Day Man of the Match</h3><p><strong>Player F1</strong></p><p>3 goals • 1 assist</p></div>
+      <div class="card"><h3>👥 Match Day Best Eleven</h3><p>GK • DEF • DEF • DEF • MID • MID • MID • FW • FW • FW • FW</p></div>
+      <div class="card"><h3>🏅 Award Categories</h3><p>Best Goalkeeper</p><p>Best Defender</p><p>Best Midfielder</p><p>Best Forward</p><p>Best Young Player</p><p>Fair Play Award</p></div>
+      <div class="card"><h3>🥇 Tournament Best 11</h3><p>The official tournament team of the competition will be published here.</p></div>
+    </div>
+  </section>
+
+  <section id="media">
+    <div class="section-title"><h2>📸 Media Centre</h2></div>
+    <div class="grid">
+      <div class="card"><div class="media">📸</div><h3>Photos</h3><p>Upload and display match photographs.</p></div>
+      <div class="card"><div class="media">🎥</div><h3>Videos</h3><p>Upload match videos and interviews.</p></div>
+      <div class="card"><div class="media">⭐</div><h3>Highlights</h3><p>Featured goals and match highlights.</p></div>
+      <div class="card"><div class="media">👥</div><h3>Team Photos</h3><p>Official team and squad photographs.</p></div>
+    </div>
+  </section>
+
+  <section id="news">
+    <div class="section-title"><h2>📢 Announcements & News</h2></div>
+    <div class="notice"><strong>📢 Tournament Update:</strong> Latest tournament announcements will appear here.</div>
+    <div class="grid">
+      <div class="card"><h3>Latest News</h3><p>Match reports, tournament updates and important information.</p></div>
+      <div class="card"><h3>📢 Official Announcements</h3><p>Official notices from tournament management.</p></div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="section-title"><h2>📜 Rules & Regulations</h2></div>
+    <div class="card">
+      <h3>Tournament Regulations</h3>
+      <ol style="padding-left:20px">
+        <li>All teams must comply with tournament registration requirements.</li>
+        <li>Players must be properly registered before participating.</li>
+        <li>Match officials have authority over match-day decisions.</li>
+        <li>Disciplinary decisions shall follow the official tournament rules.</li>
+        <li>Organizers may publish amendments and official notices.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="disciplinary">
+    <div class="section-title"><h2>🚨 Disciplinary Notices</h2></div>
+    <div class="card">
+      <h3>Official Disciplinary Notices</h3>
+      <p>No current disciplinary notices.</p>
+    </div>
+  </section>
+
+  <section id="complaints">
+    <div class="section-title"><h2>📝 Private Complaints Section</h2></div>
+    <div class="card private">
+      <h3>🔒 Confidential Complaint Form</h3>
+      <p class="muted">This demonstration form does not securely store complaints. Connect it to a secure backend before collecting real confidential information.</p>
+      <br>
+      <form onsubmit="submitComplaint(event)">
+        <label>Full Name<br><input required type="text" style="width:100%;padding:10px;margin:5px 0 12px"></label>
+        <label>Email<br><input required type="email" style="width:100%;padding:10px;margin:5px 0 12px"></label>
+        <label>Complaint<br><textarea required rows="5" style="width:100%;padding:10px;margin:5px 0 12px"></textarea></label>
+        <button class="btn" type="submit">Submit Complaint</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="admin">
+    <div class="section-title"><h2>🔐 Admin Section</h2></div>
+    <div class="grid">
+      <div class="card admin-card"><h3>👑 Super Admin</h3><p>Full system control, users, settings, tournament configuration and permissions.</p><button class="btn" onclick="adminLogin('Super Admin')">Admin Login</button></div>
+      <div class="card admin-card"><h3>⚽ Games Admin</h3><p>Manage fixtures, results, scores, line-ups, officials and match events.</p><button class="btn" onclick="adminLogin('Games Admin')">Admin Login</button></div>
+      <div class="card admin-card"><h3>📸 Media Admin</h3><p>Manage photos, videos, highlights, team photos and media announcements.</p><button class="btn" onclick="adminLogin('Media Admin')">Admin Login</button></div>
+      <div class="card admin-card"><h3>🚨 Disciplinary Admin</h3><p>Manage cards, suspensions, disciplinary cases and official notices.</p><button class="btn" onclick="adminLogin('Disciplinary Admin')">Admin Login</button></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p><strong>⚽ Football Tournament Match Centre</strong></p>
+  <p>© 2026 Tournament Management • All Rights Reserved</p>
+</footer>
+
+<script>
+  function showMatchDetails(match) {
+    alert(match + "\\n\\nMatch events will be loaded from your database/API when connected.");
+  }
+
+  function adminLogin(role) {
+    alert(role + "\\n\\nConnect this button to your secure authentication system. Do not store admin passwords in this HTML file.");
+  }
+
+  function submitComplaint(event) {
+    event.preventDefault();
+    alert("Demo only: connect this form to a secure backend before collecting private complaints.");
+  }
+</script>
+
+</body>
+</html>
