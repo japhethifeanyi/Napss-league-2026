@@ -179,7 +179,8 @@ async function loadTeams() {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("LOAD TEAMS ERROR:", error);
+    alert("Could not load teams: " + error.message);
   }
 }
 
