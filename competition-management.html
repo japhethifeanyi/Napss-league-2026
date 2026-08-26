@@ -264,15 +264,30 @@ async function loadFixtures() {
       return;
     }
 
-    container.innerHTML = fixtures.map(f => `
-      <div style="padding:15px;border-bottom:1px solid #ddd;">
-        <strong>Fixture #${f.id}</strong><br>
-        Date: ${f.match_date || "Not set"}<br>
-        Time: ${f.match_time || "Not set"}<br>
-        Venue: ${f.venue || "Not set"}<br>
-        Status: ${f.status || "scheduled"}
-      </div>
-    `).join("");
+container.innerHTML = fixtures.map(f => {
+  const status = f.status || "UPCOMING";
+
+  let statusLabel = "🟡 UPCOMING";
+  if (status === "LIVE") statusLabel = "🔴 LIVE";
+  if (status === "FT") statusLabel = "🏁 FT";
+
+  const score =
+    f.home_goals !== null && f.home_goals !== undefined &&
+    f.away_goals !== null && f.away_goals !== undefined
+      ? `<br><strong>Score: ${f.home_goals} - ${f.away_goals}</strong>`
+      : "";
+
+  return `
+    <div style="padding:15px;border-bottom:1px solid #ddd;">
+      <strong>Fixture #${f.id}</strong><br>
+      Date: ${f.match_date || "Not set"}<br>
+      Time: ${f.match_time || "Not set"}<br>
+      Venue: ${f.venue || "Not set"}<br>
+      Status: <strong>${statusLabel}</strong>
+      ${score}
+    </div>
+  `;
+}).join("");
 
   } catch (error) {
     console.error(error);
