@@ -179,8 +179,7 @@ async function loadTeams() {
     });
 
   } catch (error) {
-    console.error("LOAD TEAMS ERROR:", error);
-    alert("Could not load teams: " + error.message);
+    console.error(error);
   }
 }
 
@@ -279,21 +278,14 @@ container.innerHTML = fixtures.map(f => {
       : "";
 
   return `
-  <div style="padding:15px;border-bottom:1px solid #ddd;">
-    <strong>Fixture #${f.id}</strong><br>
-    Date: ${f.match_date || "Not set"}<br>
-    Time: ${f.match_time || "Not set"}<br>
-    Venue: ${f.venue || "Not set"}<br>
-    Status: <strong>${statusLabel}</strong>
-    ${score}
-    <br><br>
-    <button
-      onclick="deleteFixture(${f.id})"
-      style="background:#dc2626;color:white;border:none;padding:10px 15px;border-radius:6px;cursor:pointer;">
-      Delete Fixture
-    </button>
-  </div>
-`;
+    <div style="padding:15px;border-bottom:1px solid #ddd;">
+      <strong>Fixture #${f.id}</strong><br>
+      Date: ${f.match_date || "Not set"}<br>
+      Time: ${f.match_time || "Not set"}<br>
+      Venue: ${f.venue || "Not set"}<br>
+      Status: <strong>${statusLabel}</strong>
+      ${score}
+    </div>
   `;
 }).join("");
 
@@ -301,39 +293,8 @@ container.innerHTML = fixtures.map(f => {
     console.error(error);
     container.innerHTML = "<p>Unable to load fixtures.</p>";
   }
-  }async function deleteFixture(fixtureId) {
-  if (!confirm(`Are you sure you want to delete Fixture #${fixtureId}?`)) {
-    return;
-  }
+}
 
-  try {
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/fixtures?id=eq.${fixtureId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-          "Prefer": "return=minimal"
-        }
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(await response.text());
-    }
-
-    alert(`Fixture #${fixtureId} deleted successfully.`);
-
-    await loadFixtures();
-    await loadResultFixtures();
-    await loadLeagueTable();
-
-  } catch (error) {
-    console.error(error);
-    alert("Could not delete fixture: " + error.message);
-  }
-  }
 async function loadLeagueTable() {
 
   const container = document.getElementById("leagueTable");
