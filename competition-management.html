@@ -122,7 +122,25 @@ label {
 Loading fixtures...
 </div>
 </div>
+<div class="card">
+<h2>⚽ Enter Match Result</h2>
+<p>Select a fixture and enter the final score.</p>
 
+<label>Fixture</label>
+<select id="resultFixture">
+<option value="">Select fixture</option>
+</select>
+
+<label>Home Goals</label>
+<input type="number" id="homeGoals" min="0" placeholder="0">
+
+<label>Away Goals</label>
+<input type="number" id="awayGoals" min="0" placeholder="0">
+
+<button onclick="saveResult()">Save Result</button>
+
+<div id="resultMessage" class="message"></div>
+</div>
 <div class="card">
 <h2>🏆 League Table</h2>
 <p>League standings will be displayed here.</p>
