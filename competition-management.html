@@ -216,7 +216,7 @@ async function saveFixture() {
     message.textContent = "Fixture saved successfully.";
 
     loadFixtures();
-
+loadLeagueTable();
   } catch (error) {
     console.error(error);
     message.textContent = "Could not save fixture.";
