@@ -320,9 +320,143 @@ async function loadLeagueTable() {
     container.innerHTML = "<p>Unable to load league table.</p>";
   }
 }
+async function loadResultFixtures() {
+  const select = document.getElementById("resultFixture");
 
+  if (!select) return;
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,match_date,match_time,venue,status,home_goals,away_goals&order=match_date,match_time`,
+      {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    const fixtures = await response.json();
+
+    const teamsResponse = await fetch(
+      `${SUPABASE_URL}/rest/v1/teams?select=id,name`,
+      {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+
+    if (!teamsResponse.ok) {
+      throw new Error(await teamsResponse.text());
+    }
+
+    const teams = await teamsResponse.json();
+
+    const teamMap = {};
+    teams.forEach(team => {
+      teamMap[team.id] = team.name;
+    });
+
+    select.innerHTML = `<option value="">Select fixture</option>`;
+
+    fixtures.forEach(fixture => {
+      const homeName = teamMap[fixture.home_team_id] || "Home Team";
+      const awayName = teamMap[fixture.away_team_id] || "Away Team";
+
+      const score =
+        fixture.home_goals !== null && fixture.away_goals !== null
+          ? ` (${fixture.home_goals}-${fixture.away_goals})`
+          : "";
+
+      const option = document.createElement("option");
+
+      option.value = fixture.id;
+      option.textContent =
+        `${homeName} vs ${awayName} - ${fixture.match_date || "No date"}${score}`;
+
+      select.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+async function saveResult() {
+
+  const fixtureId = document.getElementById("resultFixture").value;
+  const homeGoalsValue = document.getElementById("homeGoals").value;
+  const awayGoalsValue = document.getElementById("awayGoals").value;
+  const message = document.getElementById("resultMessage");
+
+  if (!fixtureId) {
+    message.textContent = "Please select a fixture.";
+    return;
+  }
+
+  if (homeGoalsValue === "" || awayGoalsValue === "") {
+    message.textContent = "Please enter both scores.";
+    return;
+  }
+
+  const homeGoals = Number(homeGoalsValue);
+  const awayGoals = Number(awayGoalsValue);
+
+  if (
+    !Number.isInteger(homeGoals) ||
+    !Number.isInteger(awayGoals) ||
+    homeGoals < 0 ||
+    awayGoals < 0
+  ) {
+    message.textContent = "Scores must be whole numbers and cannot be negative.";
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/fixtures?id=eq.${fixtureId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          home_goals: homeGoals,
+          away_goals: awayGoals,
+          status: "completed"
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    message.textContent = "Result saved successfully.";
+
+    await loadResultFixtures();
+    await loadFixtures();
+    await loadLeagueTable();
+
+  } catch (error) {
+    console.error(error);
+    message.textContent = "Could not save result.";
+  }
+  }
 loadTeams();
 loadFixtures();
+loadResultFixtures();
 loadLeagueTable();
 </script>
 
