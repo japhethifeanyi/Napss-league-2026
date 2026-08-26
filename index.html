@@ -486,38 +486,54 @@
     alert(match + "\\n\\nMatch events will be loaded from your database/API when connected.");
   }
 
-  async function adminLogin(role) { 
-    const email = prompt("Enter your admin email:");
-    if (!email) return;
+  async function adminLogin(role) {
+    try {
+        const email = prompt("Enter your admin email:");
+        if (!email) return;
 
-    const password = prompt("Enter your admin password:");
-    if (!password) return;
+        const password = prompt("Enter your admin password:");
+        if (!password) return;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
-    if (error) {
-        alert("Login failed: " + error.message);
-        return;
+        if (error) {
+            alert("Login failed: " + error.message);
+            return;
+        }
+
+        if (!data || !data.user) {
+            alert("Login failed: No user was returned.");
+            return;
+        }
+
+        const { data: admin, error: adminError } = await supabase
+            .from("admin_users")
+            .select("role")
+            .eq("user_id", data.user.id)
+            .eq("role", role)
+            .single();
+
+        if (adminError) {
+            alert("Admin check failed: " + adminError.message);
+            await supabase.auth.signOut();
+            return;
+        }
+
+        if (!admin) {
+            await supabase.auth.signOut();
+            alert("Access denied. You do not have permission for " + role + ".");
+            return;
+        }
+
+        alert("Login successful!\n\nWelcome, " + role + "!");
+        
+    } catch (err) {
+        alert("Unexpected error: " + err.message);
     }
-
-    const { data: admin, error: adminError } = await supabase
-        .from("admin_users")
-        .select("role")
-        .eq("user_id", data.user.id)
-        .eq("role", role)
-        .single();
-
-    if (adminError || !admin) {
-        await supabase.auth.signOut();
-        alert("Access denied. You do not have permission for " + role + ".");
-        return;
-    }
-
-    alert("Login successful!\n\nWelcome, " + role + ".");
-}
+  }
   function submitComplaint(event) {
     event.preventDefault();
     alert("Demo only: connect this form to a secure backend before collecting private complaints.");
