@@ -539,7 +539,7 @@ const supabaseClient = window.supabase.createClient(
         }
 
         alert("Login successful!\n\nWelcome, " + role + "!");
-        
+    window.location.href = "super-admin.html";    
     } catch (err) {
         alert("Unexpected error: " + err.message);
     }
