@@ -1,1 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competition Management</title>
 
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f4f7f5;
+  color: #064d2b;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  margin: 18px 0;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  border-left: 6px solid #087f3e;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+button, .button {
+  background: #087f3e;
+  color: white;
+  border: none;
+  padding: 13px 18px;
+  border-radius: 8px;
+  font-size: 16px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button {
+  cursor: pointer;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 14px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+label {
+  font-weight: bold;
+}
+
+.back {
+  margin-bottom: 20px;
+}
+
+.message {
+  margin-top: 12px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="user-management.html" class="button back">
+← Back to User Management
+</a>
+
+<h1>🏆 Competition Management</h1>
+
+<div class="card">
+<h2>⚽ Single Fixture</h2>
+  
+<p>Create one league fixture at a time.</p>
+<label>Home Team</label>
+<select id="homeTeam">
+<option value="">Select home team</option>
+</select>
+
+<label>Away Team</label>
+<select id="awayTeam">
+<option value="">Select away team</option>
+</select>
+
+<label>Match Date</label>
+<input type="date" id="matchDate">
+
+<label>Match Time</label>
+<input type="time" id="matchTime">
+
+<label>Venue</label>
+<input type="text" id="venue" placeholder="Enter venue">
+
+<button onclick="saveFixture()">Save Fixture</button>
+
+<div id="fixtureMessage" class="message"></div>
+</div>
+
+<div class="card">
+<h2>📅 Manage Fixtures</h2>
+<p>Fixtures will appear here after they are created.</p>
+
+<div id="fixturesList">
+Loading fixtures...
+</div>
+</div>
+
+<div class="card">
+<h2>🏆 League Table</h2>
+<p>League standings will be displayed here.</p>
+
+<div id="leagueTable">
+Loading league table...
+</div>
+</div>
+
+</div>
+
+<script>
+const SUPABASE_URL = "https://tuvszqwiqewuuvwwnvfh.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_oB96dEr1i2agcKeunapHjA_5AzYUwnD";
+
+async function loadTeams() {
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/teams?select=id,name&order=name`,
+      {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+
+    const teams = await response.json();
+
+    const home = document.getElementById("homeTeam");
+    const away = document.getElementById("awayTeam");
+
+    teams.forEach(team => {
+      home.innerHTML += `<option value="${team.id}">${team.name}</option>`;
+      away.innerHTML += `<option value="${team.id}">${team.name}</option>`;
+    });
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function saveFixture() {
+
+  const homeTeam = document.getElementById("homeTeam").value;
+  const awayTeam = document.getElementById("awayTeam").value;
+  const matchDate = document.getElementById("matchDate").value;
+  const matchTime = document.getElementById("matchTime").value;
+  const venue = document.getElementById("venue").value;
+
+  const message = document.getElementById("fixtureMessage");
+
+  if (!homeTeam || !awayTeam || !matchDate) {
+    message.textContent = "Please select both teams and a match date.";
+    return;
+  }
+
+  if (homeTeam === awayTeam) {
+    message.textContent = "Home team and away team cannot be the same.";
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/fixtures`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          home_team_id: Number(homeTeam),
+          away_team_id: Number(awayTeam),
+          match_date: matchDate,
+          match_time: matchTime || null,
+          venue: venue || null,
+          status: "scheduled"
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error);
+    }
+
+    message.textContent = "Fixture saved successfully.";
+
+    loadFixtures();
+
+  } catch (error) {
+    console.error(error);
+    message.textContent = "Could not save fixture.";
+  }
+}
+
+async function loadFixtures() {
+
+  const container = document.getElementById("fixturesList");
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/fixtures?select=*&order=match_date,match_time`,
+      {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+
+    const fixtures = await response.json();
+
+    if (!fixtures.length) {
+      container.innerHTML = "<p>No fixtures yet.</p>";
+      return;
+    }
+
+    container.innerHTML = fixtures.map(f => `
+      <div style="padding:15px;border-bottom:1px solid #ddd;">
+        <strong>Fixture #${f.id}</strong><br>
+        Date: ${f.match_date || "Not set"}<br>
+        Time: ${f.match_time || "Not set"}<br>
+        Venue: ${f.venue || "Not set"}<br>
+        Status: ${f.status || "scheduled"}
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = "<p>Unable to load fixtures.</p>";
+  }
+}
+
+async function loadLeagueTable() {
+
+  const container = document.getElementById("leagueTable");
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/league_table?select=*&order=points.desc,goal_difference.desc`,
+      {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+
+    const table = await response.json();
+
+    if (!table.length) {
+      container.innerHTML = "<p>No league table data yet.</p>";
+      return;
+    }
+
+    container.innerHTML = table.map((team, index) => `
+      <div style="padding:12px;border-bottom:1px solid #ddd;">
+        <strong>${index + 1}. ${team.team_name}</strong><br>
+        P: ${team.played || 0}
+        &nbsp; W: ${team.wins || 0}
+        &nbsp; D: ${team.draws || 0}
+        &nbsp; L: ${team.losses || 0}
+        &nbsp; GD: ${team.goal_difference || 0}
+        &nbsp; <strong>Pts: ${team.points || 0}</strong>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = "<p>Unable to load league table.</p>";
+  }
+}
+
+loadTeams();
+loadFixtures();
+loadLeagueTable();
+</script>
+
+</body>
+  </html>
