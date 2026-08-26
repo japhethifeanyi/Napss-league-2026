@@ -380,7 +380,7 @@ async function loadResultFixtures() {
 
     select.innerHTML = `<option value="">Select fixture</option>`;
 
-    fixtures.forEach(fixture => {
+    fixtures.forEach((fixture, index) => {
       const homeName = teamMap[fixture.home_team_id] || "Home Team";
       const awayName = teamMap[fixture.away_team_id] || "Away Team";
 
@@ -392,9 +392,7 @@ async function loadResultFixtures() {
       const option = document.createElement("option");
 
       option.value = fixture.id;
-      option.textContent =
-        `${homeName} vs ${awayName} - ${fixture.match_date || "No date"}${score}`;
-
+      option.textContent = `${index + 1}# - ${homeName} vs ${awayName} - ${fixture.match_date || "No date"}${score}`;
       select.appendChild(option);
     });
 
