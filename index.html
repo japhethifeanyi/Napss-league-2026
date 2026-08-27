@@ -473,22 +473,52 @@
       <div class="card admin-card"><h3>🚨 Disciplinary Admin</h3><p>Manage cards, suspensions, disciplinary cases and official notices.</p><button class="btn" onclick="adminLogin('Disciplinary Admin')">Admin Login</button></div>
     </div>
   </section>
-
 </main>
 
 <footer>
   <p><strong>⚽ Football Tournament Match Centre</strong></p>
   <p>© 2026 Tournament Management • All Rights Reserved</p>
 </footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-const SUPABASE_URL = "https://tuvszqwiqewuuvwwnvfh.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_oB96dEr1i2agcKeunapHjA_5AzYUwnD";
+  const SUPABASE_URL = "https://tuvszqatqewwuvwnwvfh.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_oB96dEr1i2agcKeunapHJA_SAzYUwnD";
 
-const supabaseClient = window.supabase.createClient(
+  const supabaseClient = window.supabase.createClient(
+  
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
+    // Fetch and load data automatically
+  async function loadLeagueData() {
+    // 1. Fetch Teams
+    const { data: teams, error: teamsErr } = await supabaseClient
+      .from('teams')
+      .select('*');
+
+    if (teamsErr) console.error('Error fetching teams:', teamsErr);
+    else console.log('Teams:', teams);
+
+    // 2. Fetch Fixtures
+    const { data: fixtures, error: fixErr } = await supabaseClient
+      .from('fixtures')
+      .select('*');
+
+    if (fixErr) console.error('Error fetching fixtures:', fixErr);
+    else console.log('Fixtures:', fixtures);
+
+    // 3. Fetch Announcements
+    const { data: announcements, error: annErr } = await supabaseClient
+      .from('announcements')
+      .select('*');
+
+    if (annErr) console.error('Error fetching announcements:', annErr);
+    else console.log('Announcements:', announcements);
+  }
+
+  // Trigger on load
+  document.addEventListener('DOMContentLoaded', loadLeagueData);
+
 );
 </script>
 <script>
