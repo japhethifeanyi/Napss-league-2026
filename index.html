@@ -491,31 +491,32 @@
     SUPABASE_PUBLISHABLE_KEY
     // Fetch and load data automatically
   async function loadLeagueData() {
-    // 1. Fetch Teams
-    const { data: teams, error: teamsErr } = await supabaseClient
-      .from('teams')
-      .select('*');
+  // 1. Fetch Fixtures from Supabase
+  const { data: fixtures, error: fixErr } = await supabaseClient
+    .from('fixtures')
+    .select('*');
 
-    if (teamsErr) console.error('Error fetching teams:', teamsErr);
-    else console.log('Teams:', teams);
-
-    // 2. Fetch Fixtures
-    const { data: fixtures, error: fixErr } = await supabaseClient
-      .from('fixtures')
-      .select('*');
-
-    if (fixErr) console.error('Error fetching fixtures:', fixErr);
-    else console.log('Fixtures:', fixtures);
-
-    // 3. Fetch Announcements
-    const { data: announcements, error: annErr } = await supabaseClient
-      .from('announcements')
-      .select('*');
-
-    if (annErr) console.error('Error fetching announcements:', annErr);
-    else console.log('Announcements:', announcements);
+  if (fixErr) {
+    console.error('Error fetching fixtures:', fixErr);
+    return;
   }
 
+  // 2. Render Fixtures into the UI table if elements exist
+  const fixturesTable = document.querySelector('.fixtures-table tbody') || document.querySelector('table tbody');
+  
+  if (fixturesTable && fixtures && fixtures.length > 0) {
+    fixturesTable.innerHTML = fixtures.map(match => `
+      <tr>
+        <td>${match.date || 'TBD'}</td>
+        <td>${match.home_team || match.team_a || 'Team'} vs ${match.away_team || match.team_b || 'Team'}</td>
+        <td>${match.venue || 'Main Stadium'}</td>
+        <td>${match.kick_off || match.time || '3:00 PM'}</td>
+        <td>${match.officials || 'TBD'}</td>
+      </tr>
+    `).join('');
+  }
+  }
+  
   // Trigger on load
   document.addEventListener('DOMContentLoaded', loadLeagueData);
 
