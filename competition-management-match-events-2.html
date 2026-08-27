@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competition Management</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f4f7f5;
+  color: #064d2b;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  margin: 18px 0;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  border-left: 6px solid #087f3e;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+button, .button {
+  background: #087f3e;
+  color: white;
+  border: none;
+  padding: 13px 18px;
+  border-radius: 8px;
+  font-size: 16px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button {
+  cursor: pointer;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 14px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+label {
+  font-weight: bold;
+}
+
+.back {
+  margin-bottom: 20px;
+}
+
+.message {
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.roster-list{margin-top:14px;}
+.player-card{border:1px solid #dfe7e2;border-radius:10px;padding:10px;margin:8px 0;background:#fbfdfc;}
+.player-main{display:flex;justify-content:space-between;gap:10px;align-items:center;}
+.player-photo{width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid #087f3e;background:#eef4f0;flex:0 0 58px;}
+.player-info{display:flex;align-items:center;gap:12px;}
+.player-name{font-weight:bold;color:#064d2b;}
+.player-meta{font-size:13px;color:#66756d;margin-top:3px;}
+.player-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.small-btn{padding:8px 10px;font-size:13px;background:#eef4f0;color:#064d2b;border:1px solid #cddbd3;}
+.small-btn.active{background:#087f3e;color:white;border-color:#087f3e;}
+.small-btn.captain.active{background:#b8860b;border-color:#b8860b;color:white;}
+.sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;}
+.team-sheet,.officials-box{border:1px solid #dfe7e2;border-radius:12px;padding:16px;background:#fcfffd;}
+.officials-box{margin:18px 0;}
+.summary{font-weight:bold;margin:10px 0;color:#087f3e;}
+.hint{font-size:13px;color:#66756d;}
+@media(max-width:700px){.sheet-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="user-management.html" class="button back">
+← Back to User Management
+</a>
+
+<h1>🏆 Competition Management</h1>
+
+<div class="card">
+<h2>⚽ Single Fixture</h2>
+  
+<p>Create one league fixture at a time.</p>
+<label>Home Team</label>
+<select id="homeTeam">
+<option value="">Select home team</option>
+</select>
+
+<label>Away Team</label>
+<select id="awayTeam">
+<option value="">Select away team</option>
+</select>
+
+<label>Match Date</label>
+<input type="date" id="matchDate">
+
+<label>Match Time</label>
+<input type="time" id="matchTime">
+
+<label>Venue</label>
+<input type="text" id="venue" placeholder="Enter venue">
+
+<button onclick="saveFixture()">Save Fixture</button>
+
+<div id="fixtureMessage" class="message"></div>
+</div>
+
+<div class="card">
+<h2>📅 Manage Fixtures</h2>
+<p>Fixtures will appear here after they are created.</p>
+
+<div id="fixturesList">
+Loading fixtures...
+</div>
+</div>
+<div class="card">
+<h2>⚽ Enter Match Result</h2>
+<p>Select a fixture and enter the final score.</p>
+
+<label>Fixture</label>
+<select id="resultFixture">
+<option value="">Select fixture</option>
+</select>
+
+<label>Home Goals</label>
+<input type="number" id="homeGoals" min="0" placeholder="0">
+
+<label>Away Goals</label>
+<input type="number" id="awayGoals" min="0" placeholder="0">
+
+<button onclick="saveResult()">Save Result</button>
+
+<div id="resultMessage" class="message"></div>
+</div>
+<div class="card">
+<h2>👥 Player Registration</h2>
+<p>Add players to their teams. These players will become available in the Match Sheet.</p>
+
+<label>Team</label>
+<select id="playerTeam"><option value="">Select team</option></select>
+
+<label>First Name</label>
+<input type="text" id="playerFirstName" placeholder="First name">
+
+<label>Last Name</label>
+<input type="text" id="playerLastName" placeholder="Last name">
+
+<label>Jersey Number</label>
+<input type="number" id="playerJersey" min="1" max="99" placeholder="e.g. 10">
+
+<label>Position</label>
+<select id="playerPosition">
+  <option value="">Select position</option>
+  <option value="GK">Goalkeeper</option>
+  <option value="DEF">Defender</option>
+  <option value="MID">Midfielder</option>
+  <option value="FW">Forward</option>
+</select>
+
+<label>Player Photo</label>
+<input type="file" id="playerPhoto" accept="image/jpeg,image/png,image/webp">
+<p class="hint">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
+
+<button onclick="savePlayer()">Add Player</button>
+<div id="playerMessage" class="message"></div>
+
+<div id="playersList" class="roster-list">Loading players...</div>
+</div>
+
+<div class="card">
+<h2>📝 Match Sheet</h2>
+<p>Prepare the official line-up, substitutes, coaches and match officials for each fixture. Player photos are shown automatically when registered.</p>
+
+<label>Fixture</label>
+<select id="lineupFixture" onchange="loadMatchSheet()"><option value="">Select fixture</option></select>
+
+<div id="matchSheetMessage" class="message"></div>
+<div id="matchSheetArea" style="display:none;">
+  <div class="sheet-grid">
+    <div class="team-sheet">
+      <h3 id="homeSheetTitle">Home Team</h3>
+      <p class="hint">Tap <b>Starter</b> for the starting XI, <b>Sub</b> for substitutes, then tap <b>Captain</b> for the captain.</p>
+      <div id="homeRoster" class="roster-list"></div>
+      <div class="summary" id="homeSummary"></div>
+      <label>Head Coach</label>
+      <input id="homeHeadCoach" placeholder="Head coach name">
+      <label>Assistant Coach(es)</label>
+      <input id="homeAssistantCoach" placeholder="Separate multiple names with commas">
+    </div>
+
+    <div class="team-sheet">
+      <h3 id="awaySheetTitle">Away Team</h3>
+      <p class="hint">Tap <b>Starter</b> for the starting XI, <b>Sub</b> for substitutes, then tap <b>Captain</b> for the captain.</p>
+      <div id="awayRoster" class="roster-list"></div>
+      <div class="summary" id="awaySummary"></div>
+      <label>Head Coach</label>
+      <input id="awayHeadCoach" placeholder="Head coach name">
+      <label>Assistant Coach(es)</label>
+      <input id="awayAssistantCoach" placeholder="Separate multiple names with commas">
+    </div>
+  </div>
+
+  <div class="officials-box">
+    <h3>🧑‍⚖️ Match Officials</h3>
+    <label>Referee</label>
+    <input id="officialReferee" placeholder="Referee name">
+    <label>Assistant Referee 1</label>
+    <input id="officialAR1" placeholder="Assistant referee 1">
+    <label>Assistant Referee 2</label>
+    <input id="officialAR2" placeholder="Assistant referee 2">
+    <label>Fourth Official</label>
+    <input id="officialFourth" placeholder="Fourth official">
+  </div>
+
+
+<div class="officials-box">
+<h3>⚡ Match Events</h3>
+<p class="hint">Record goals, cards and substitutions for the selected fixture.</p>
+<label>Event Type</label>
+<select id="eventType" onchange="renderEventFields()">
+<option value="">Select event</option>
+<option value="GOAL">⚽ Goal</option>
+<option value="YELLOW_CARD">🟨 Yellow Card</option>
+<option value="RED_CARD">🟥 Red Card</option>
+<option value="SUBSTITUTION">🔄 Substitution</option>
+</select>
+<label>Minute</label><input type="number" id="eventMinute" min="0" max="130" placeholder="e.g. 65">
+<div id="eventPlayerField"><label>Player</label><select id="eventPlayer"><option value="">Select player</option></select></div>
+<div id="subOffField" style="display:none"><label>Player OFF</label><select id="subOff"></select></div>
+<div id="subOnField" style="display:none"><label>Player ON</label><select id="subOn"></select></div>
+<button onclick="saveMatchEvent()">➕ Add Event</button>
+<div id="eventMessage" class="message"></div>
+<div id="matchEventsList" style="margin-top:14px">No events recorded yet.</div>
+</div>
+  <button onclick="saveMatchSheet()">💾 Save Match Sheet</button>
+</div>
+</div>
+
+<div class="card">
+<h2>🏆 League Table</h2>
+<p>League standings will be displayed here.</p>
+
+<div id="leagueTable">
+Loading league table...
+</div>
+</div>
+
+</div>
+
+<script>
+const SUPABASE_URL = "https://tuvszqwiqewuuvwwnvfh.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_oB96dEr1i2agcKeunapHjA_5AzYUwnD";
+const headers = {
+  "apikey": SUPABASE_ANON_KEY,
+  "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+  "Content-Type": "application/json"
+};
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
+}
+
+async function api(url, options={}){
+  const response = await fetch(url,{...options,headers:{...headers,...(options.headers||{})}});
+  const text = await response.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+  if(!response.ok) throw new Error(typeof data === "string" ? data : JSON.stringify(data));
+  return data;
+}
+
+let allTeams = [];
+let allPlayers = [];
+let currentFixture = null;
+const lineupState = {
+  home: {teamId:null, starters:new Set(), subs:new Set(), captain:null, players:[]},
+  away: {teamId:null, starters:new Set(), subs:new Set(), captain:null, players:[]}
+};
+
+
+function renderEventFields(){
+ const t=document.getElementById("eventType").value, sub=t==="SUBSTITUTION";
+ document.getElementById("eventPlayerField").style.display=(t&&!sub)?"block":"none";
+ document.getElementById("subOffField").style.display=sub?"block":"none";
+ document.getElementById("subOnField").style.display=sub?"block":"none";
+ if(!currentFixture)return;
+ const players=[...lineupState.home.players,...lineupState.away.players];
+ const opt=a=>'<option value="">Select player</option>'+a.map(p=>`<option value="${p.id}">#${p.jersey_number??"-"} ${esc(p.first_name)} ${esc(p.last_name)}</option>`).join("");
+ document.getElementById("eventPlayer").innerHTML=opt(players);
+ document.getElementById("subOff").innerHTML=opt(players.filter(p=>{
+   const s=Number(p.team_id)===Number(currentFixture.home_team_id)?"home":"away"; return lineupState[s].starters.has(Number(p.id));
+ }));
+ document.getElementById("subOn").innerHTML=opt(players.filter(p=>{
+   const s=Number(p.team_id)===Number(currentFixture.home_team_id)?"home":"away"; return lineupState[s].subs.has(Number(p.id));
+ }));
+}
+async function loadMatchEvents(){
+ if(!currentFixture)return;
+ const box=document.getElementById("matchEventsList");
+ try{
+  const ev=await api(`${SUPABASE_URL}/rest/v1/match_events?fixture_id=eq.${currentFixture.id}&select=id,player_id,event_type,minute&order=minute.asc,id.asc`);
+  const pm={}; allPlayers.forEach(p=>pm[p.id]=p);
+  box.innerHTML=ev.length?ev.map(e=>{
+   const p=pm[e.player_id], n=p?`#${p.jersey_number??"-"} ${esc(p.first_name)} ${esc(p.last_name)}`:"Unknown player";
+   const label=e.event_type==="GOAL"?"⚽ Goal":e.event_type==="YELLOW_CARD"?"🟨 Yellow Card":e.event_type==="RED_CARD"?"🟥 Red Card":e.event_type==="SUBSTITUTION_OFF"?"⬇️ Substitution OFF":e.event_type==="SUBSTITUTION_ON"?"⬆️ Substitution ON":esc(e.event_type);
+   return `<div style="padding:9px;border:1px solid #dfe7e2;border-radius:8px;margin:6px 0"><strong>${e.minute??"-"}'</strong> ${label} — ${n} <button class="small-btn" onclick="deleteMatchEvent(${e.id})">Delete</button></div>`;
+  }).join(""):"<p>No events recorded yet.</p>";
+ }catch(e){box.innerHTML="<p>Unable to load events.</p>";}
+}
+async function saveMatchEvent(){
+ const msg=document.getElementById("eventMessage"), type=document.getElementById("eventType").value, minute=document.getElementById("eventMinute").value;
+ if(!currentFixture){msg.textContent="Select a fixture first.";return;}
+ if(!type||minute===""){msg.textContent="Select event type and minute.";return;}
+ try{
+  if(type==="SUBSTITUTION"){
+   const off=Number(document.getElementById("subOff").value), on=Number(document.getElementById("subOn").value);
+   if(!off||!on||off===on){msg.textContent="Select different OFF and ON players.";return;}
+   await api(`${SUPABASE_URL}/rest/v1/match_events`,{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify([
+    {fixture_id:Number(currentFixture.id),player_id:off,event_type:"SUBSTITUTION_OFF",minute:Number(minute)},
+    {fixture_id:Number(currentFixture.id),player_id:on,event_type:"SUBSTITUTION_ON",minute:Number(minute)}
+   ])});
+  }else{
+   const player=Number(document.getElementById("eventPlayer").value);
+   if(!player){msg.textContent="Select a player.";return;}
+   await api(`${SUPABASE_URL}/rest/v1/match_events`,{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify({fixture_id:Number(currentFixture.id),player_id:player,event_type:type,minute:Number(minute)})});
+  }
+  msg.textContent="Event saved successfully."; document.getElementById("eventMinute").value=""; document.getElementById("eventType").value="";
+  renderEventFields(); await loadMatchEvents();
+ }catch(e){msg.textContent="Could not save event: "+e.message;}
+}
+async function deleteMatchEvent(id){
+ if(!confirm("Delete this event?"))return;
+ try{await api(`${SUPABASE_URL}/rest/v1/match_events?id=eq.${id}`,{method:"DELETE"});await loadMatchEvents();}catch(e){alert("Could not delete event: "+e.message);}
+}
+async function loadTeams(){
+  try{
+    allTeams = await api(`${SUPABASE_URL}/rest/v1/teams?select=id,name&order=name`);
+    const home=document.getElementById("homeTeam");
+    const away=document.getElementById("awayTeam");
+    const playerTeam=document.getElementById("playerTeam");
+    const options=allTeams.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join("");
+    home.innerHTML='<option value="">Select home team</option>'+options;
+    away.innerHTML='<option value="">Select away team</option>'+options;
+    playerTeam.innerHTML='<option value="">Select team</option>'+options;
+  }catch(e){console.error(e);}
+}
+
+async function saveFixture(){
+  const homeTeam=document.getElementById("homeTeam").value;
+  const awayTeam=document.getElementById("awayTeam").value;
+  const matchDate=document.getElementById("matchDate").value;
+  const matchTime=document.getElementById("matchTime").value;
+  const venue=document.getElementById("venue").value;
+  const message=document.getElementById("fixtureMessage");
+  if(!homeTeam||!awayTeam||!matchDate){message.textContent="Please select both teams and a match date.";return;}
+  if(homeTeam===awayTeam){message.textContent="Home team and away team cannot be the same.";return;}
+  try{
+    await api(`${SUPABASE_URL}/rest/v1/fixtures`,{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({home_team_id:Number(homeTeam),away_team_id:Number(awayTeam),match_date:matchDate,match_time:matchTime||null,venue:venue||null,status:"UPCOMING"})});
+    message.textContent="Fixture saved successfully.";
+    await loadFixtures(); await loadResultFixtures(); await loadMatchFixtures(); await loadLeagueTable();
+  }catch(e){console.error(e);message.textContent="Could not save fixture: "+e.message;}
+}
+
+async function loadFixtures(){
+  const container=document.getElementById("fixturesList");
+  try{
+    const fixtures=await api(`${SUPABASE_URL}/rest/v1/fixtures?select=*&order=match_date,match_time`);
+    if(!fixtures.length){container.innerHTML="<p>No fixtures yet.</p>";return;}
+    const map={};allTeams.forEach(t=>map[t.id]=t.name);
+    container.innerHTML=fixtures.map(f=>{
+      const status=f.status||"UPCOMING";
+      const statusLabel=status==="LIVE"?"🔴 LIVE":status==="FT"?"🏁 FT":"🟡 UPCOMING";
+      const score=f.home_goals!==null&&f.home_goals!==undefined&&f.away_goals!==null&&f.away_goals!==undefined?`<br><strong>Score: ${f.home_goals} - ${f.away_goals}</strong>`:"";
+      return `<div style="padding:15px;border-bottom:1px solid #ddd;"><strong>Fixture #${f.id}</strong><br>${esc(map[f.home_team_id]||"Home Team")} vs ${esc(map[f.away_team_id]||"Away Team")}<br>Date: ${f.match_date||"Not set"}<br>Time: ${f.match_time||"Not set"}<br>Venue: ${esc(f.venue||"Not set")}<br>Status: <strong>${statusLabel}</strong>${score}</div>`;
+    }).join("");
+  }catch(e){console.error(e);container.innerHTML="<p>Unable to load fixtures.</p>";}
+}
+
+async function loadResultFixtures(){
+  const select=document.getElementById("resultFixture");if(!select)return;
+  try{
+    const fixtures=await api(`${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,match_date,match_time,venue,status,home_goals,away_goals&order=match_date,match_time`);
+    const map={};allTeams.forEach(t=>map[t.id]=t.name);
+    select.innerHTML='<option value="">Select fixture</option>';
+    fixtures.forEach(f=>{const score=f.home_goals!==null&&f.away_goals!==null?` (${f.home_goals}-${f.away_goals})`:"";select.innerHTML+=`<option value="${f.id}">${f.id}# - ${esc(map[f.home_team_id]||"Home Team")} vs ${esc(map[f.away_team_id]||"Away Team")} - ${f.match_date||"No date"}${score}</option>`;});
+  }catch(e){console.error(e);}
+}
+
+async function saveResult(){
+  const fixtureId=document.getElementById("resultFixture").value, hg=document.getElementById("homeGoals").value, ag=document.getElementById("awayGoals").value, message=document.getElementById("resultMessage");
+  if(!fixtureId){message.textContent="Please select a fixture.";return;} if(hg===""||ag===""){message.textContent="Please enter both scores.";return;}
+  const homeGoals=Number(hg),awayGoals=Number(ag); if(!Number.isInteger(homeGoals)||!Number.isInteger(awayGoals)||homeGoals<0||awayGoals<0){message.textContent="Scores must be whole numbers and cannot be negative.";return;}
+  try{await api(`${SUPABASE_URL}/rest/v1/fixtures?id=eq.${fixtureId}`,{method:"PATCH",headers:{"Prefer":"return=representation"},body:JSON.stringify({home_goals:homeGoals,away_goals:awayGoals,status:"FT"})});message.textContent="Result saved successfully.";await loadResultFixtures();await loadFixtures();await loadLeagueTable();}catch(e){console.error(e);message.textContent="Could not save result: "+e.message;}
+}
+
+async function loadLeagueTable(){
+  const container=document.getElementById("leagueTable");
+  try{const table=await api(`${SUPABASE_URL}/rest/v1/league_table?select=*&order=points.desc,goal_difference.desc`);if(!table.length){container.innerHTML="<p>No league table data yet.</p>";return;}container.innerHTML=table.map((team,index)=>`<div style="padding:12px;border-bottom:1px solid #ddd;"><strong>${index+1}. ${esc(team.team_name)}</strong><br>P: ${team.played||0}&nbsp; W: ${team.wins||0}&nbsp; D: ${team.draws||0}&nbsp; L: ${team.losses||0}&nbsp; GD: ${team.goal_difference||0}&nbsp; <strong>Pts: ${team.points||0}</strong></div>`).join("");}catch(e){console.error(e);container.innerHTML="<p>Unable to load league table.</p>";}
+}
+
+async function loadPlayers(){
+  try{
+    allPlayers=await api(`${SUPABASE_URL}/rest/v1/players?select=id,team_id,first_name,last_name,jersey_number,position,photo_url&order=team_id,jersey_number,last_name`);
+    renderPlayersList();
+  }catch(e){console.error(e);document.getElementById("playersList").innerHTML="<p>Unable to load players.</p>";}
+}
+function renderPlayersList(){
+  const box=document.getElementById("playersList");
+  if(!allPlayers.length){box.innerHTML="<p>No players registered yet.</p>";return;}
+  const map={};allTeams.forEach(t=>map[t.id]=t.name);
+  box.innerHTML=allPlayers.map(p=>`<div class="player-card"><div class="player-main"><div class="player-info">
+    ${p.photo_url?`<img class="player-photo" src="${esc(p.photo_url)}" alt="Player photo">`:"<div class=\"player-photo\"></div>"}
+    <div><div class="player-name">#${p.jersey_number??"-"} ${esc(p.first_name)} ${esc(p.last_name)}</div><div class="player-meta">${esc(map[p.team_id]||"Unknown team")} • ${esc(p.position||"No position")}</div></div>
+  </div></div></div>`).join("");
+}
+function publicPhotoUrl(path){
+  return `${SUPABASE_URL}/storage/v1/object/public/player-photos/${path.split("/").map(encodeURIComponent).join("/")}`;
+}
+async function uploadPlayerPhoto(file, teamId){
+  if(!file) return null;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)) throw new Error("Photo must be JPG, PNG or WebP.");
+  if(file.size>5*1024*1024) throw new Error("Photo must be 5 MB or smaller.");
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+  const path=`team-${teamId}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+  const response=await fetch(`${SUPABASE_URL}/storage/v1/object/player-photos/${path}`,{
+    method:"POST",
+    headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${SUPABASE_ANON_KEY}`,"Content-Type":file.type,"x-upsert":"false"},
+    body:file
+  });
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error(`Photo upload failed: ${text}`);
+  }
+  return publicPhotoUrl(path);
+}
+async function savePlayer(){
+  const team=document.getElementById("playerTeam").value,
+    first=document.getElementById("playerFirstName").value.trim(),
+    last=document.getElementById("playerLastName").value.trim(),
+    jersey=document.getElementById("playerJersey").value,
+    position=document.getElementById("playerPosition").value,
+    photo=document.getElementById("playerPhoto").files[0],
+    msg=document.getElementById("playerMessage");
+  if(!team||!first||!last||!jersey||!position){msg.textContent="Please complete team, name, jersey number and position.";return;}
+  try{
+    msg.textContent="Saving player...";
+    let photoUrl=null;
+    if(photo){msg.textContent="Uploading player photo...";photoUrl=await uploadPlayerPhoto(photo,team);}
+    await api(`${SUPABASE_URL}/rest/v1/players`,{
+      method:"POST",
+      headers:{"Prefer":"return=representation"},
+      body:JSON.stringify({team_id:Number(team),first_name:first,last_name:last,jersey_number:Number(jersey),position,photo_url:photoUrl})
+    });
+    msg.textContent="Player added successfully.";
+    document.getElementById("playerFirstName").value="";
+    document.getElementById("playerLastName").value="";
+    document.getElementById("playerJersey").value="";
+    document.getElementById("playerPosition").value="";
+    document.getElementById("playerPhoto").value="";
+    await loadPlayers();
+  }catch(e){console.error(e);msg.textContent="Could not add player: "+e.message;}
+}
+
+async function loadMatchFixtures(){
+  const select=document.getElementById("lineupFixture");if(!select)return;
+  const fixtures=await api(`${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,match_date,match_time&order=match_date,match_time`);
+  const map={};allTeams.forEach(t=>map[t.id]=t.name);
+  select.innerHTML='<option value="">Select fixture</option>';
+  fixtures.forEach(f=>select.innerHTML+=`<option value="${f.id}">${f.id}# - ${esc(map[f.home_team_id]||"Home Team")} vs ${esc(map[f.away_team_id]||"Away Team")} - ${f.match_date||"No date"}</option>`);
+}
+function teamName(id){return (allTeams.find(t=>Number(t.id)===Number(id))||{}).name||"Team";}
+function resetLineupState(side,teamId,players){lineupState[side]={teamId:Number(teamId),starters:new Set(),subs:new Set(),captain:null,players};}
+function renderRoster(side){
+  const s=lineupState[side], box=document.getElementById(side+"Roster"), summary=document.getElementById(side+"Summary");
+  box.innerHTML=s.players.length?s.players.map(p=>{const starter=s.starters.has(Number(p.id)), sub=s.subs.has(Number(p.id)), cap=s.captain===Number(p.id);return `<div class="player-card"><div class="player-main"><div class="player-info">
+${p.photo_url?`<img class="player-photo" src="${esc(p.photo_url)}" alt="Player photo">`:"<div class=\"player-photo\"></div>"}
+<div><div class="player-name">#${p.jersey_number??"-"} ${esc(p.first_name)} ${esc(p.last_name)}</div><div class="player-meta">${esc(p.position||"No position")}</div></div></div><div class="player-actions"><button class="small-btn ${starter?"active":""}" onclick="setPlayerRole('${side}',${p.id},'STARTER')">Starter</button><button class="small-btn ${sub?"active":""}" onclick="setPlayerRole('${side}',${p.id},'SUBSTITUTE')">Sub</button><button class="small-btn captain ${cap?"active":""}" onclick="setCaptain('${side}',${p.id})">© Captain</button></div></div>`;}).join(""):"<p>No registered players for this team yet.</p>";
+  summary.textContent=`Starting XI: ${s.starters.size}/11 • Substitutes: ${s.subs.size} • Captain: ${s.captain?"Selected":"Not selected"}`;
+}
+function setPlayerRole(side,id,role){
+  const s=lineupState[side], pid=Number(id);
+  if(role==="STARTER"){
+    if(s.starters.has(pid)){s.starters.delete(pid);if(s.captain===pid)s.captain=null;}
+    else{if(s.starters.size>=11){alert("A team can have only 11 starters.");return;}s.starters.add(pid);s.subs.delete(pid);}
+  }else{
+    if(s.subs.has(pid))s.subs.delete(pid);else{s.subs.add(pid);s.starters.delete(pid);if(s.captain===pid)s.captain=null;}
+  }
+  renderRoster(side);
+}
+function setCaptain(side,id){const s=lineupState[side],pid=Number(id);if(!s.starters.has(pid)){alert("Select this player as a starter first.");return;}s.captain=s.captain===pid?null:pid;renderRoster(side);}
+
+async function loadMatchSheet(){
+  const fixtureId=document.getElementById("lineupFixture").value, area=document.getElementById("matchSheetArea"), msg=document.getElementById("matchSheetMessage");
+  if(!fixtureId){area.style.display="none";currentFixture=null;return;}
+  try{
+    const fixtures=await api(`${SUPABASE_URL}/rest/v1/fixtures?id=eq.${fixtureId}&select=id,home_team_id,away_team_id,match_date,match_time`); currentFixture=fixtures[0];
+    if(!currentFixture)throw new Error("Fixture not found.");
+    const players=await api(`${SUPABASE_URL}/rest/v1/players?select=id,team_id,first_name,last_name,jersey_number,position,photo_url&team_id=in.(${currentFixture.home_team_id},${currentFixture.away_team_id})&order=jersey_number,last_name`);
+    resetLineupState("home",currentFixture.home_team_id,players.filter(p=>Number(p.team_id)===Number(currentFixture.home_team_id)));
+    resetLineupState("away",currentFixture.away_team_id,players.filter(p=>Number(p.team_id)===Number(currentFixture.away_team_id)));
+    document.getElementById("homeSheetTitle").textContent=teamName(currentFixture.home_team_id);document.getElementById("awaySheetTitle").textContent=teamName(currentFixture.away_team_id);
+    const existing=await api(`${SUPABASE_URL}/rest/v1/match_lineups?fixture_id=eq.${fixtureId}&select=*`);
+    existing.forEach(x=>{const side=Number(x.team_id)===Number(currentFixture.home_team_id)?"home":"away";if(x.lineup_role==="STARTER")lineupState[side].starters.add(Number(x.player_id));else lineupState[side].subs.add(Number(x.player_id));if(x.is_captain)lineupState[side].captain=Number(x.player_id);});
+    const coaches=await api(`${SUPABASE_URL}/rest/v1/match_coaches?fixture_id=eq.${fixtureId}&select=*`);
+    document.getElementById("homeHeadCoach").value=coaches.find(c=>Number(c.team_id)===Number(currentFixture.home_team_id)&&c.coach_role==="HEAD_COACH")?.coach_name||"";
+    document.getElementById("awayHeadCoach").value=coaches.find(c=>Number(c.team_id)===Number(currentFixture.away_team_id)&&c.coach_role==="HEAD_COACH")?.coach_name||"";
+    document.getElementById("homeAssistantCoach").value=coaches.filter(c=>Number(c.team_id)===Number(currentFixture.home_team_id)&&c.coach_role==="ASSISTANT_COACH").map(c=>c.coach_name).join(", ");
+    document.getElementById("awayAssistantCoach").value=coaches.filter(c=>Number(c.team_id)===Number(currentFixture.away_team_id)&&c.coach_role==="ASSISTANT_COACH").map(c=>c.coach_name).join(", ");
+    const off=await api(`${SUPABASE_URL}/rest/v1/match_officials?fixture_id=eq.${fixtureId}&select=*`);const o=off[0]||{};
+    document.getElementById("officialReferee").value=o.referee||"";document.getElementById("officialAR1").value=o.assistant_referee_1||"";document.getElementById("officialAR2").value=o.assistant_referee_2||"";document.getElementById("officialFourth").value=o.fourth_official||"";
+    renderRoster("home");renderRoster("away");area.style.display="block";renderEventFields();await loadMatchEvents();msg.textContent="";
+  }catch(e){console.error(e);area.style.display="none";msg.textContent="Could not load match sheet: "+e.message;}
+}
+
+async function saveMatchSheet(){
+  const msg=document.getElementById("matchSheetMessage");
+  if(!currentFixture){msg.textContent="Please select a fixture.";return;}
+  for(const side of ["home","away"]){if(lineupState[side].starters.size!==11){msg.textContent=`${side==="home"?"Home":"Away"} team must have exactly 11 starters.`;return;}if(!lineupState[side].captain){msg.textContent=`Please select a captain for the ${side} team.`;return;}}
+  try{
+    const fixtureId=currentFixture.id;
+    await api(`${SUPABASE_URL}/rest/v1/match_lineups?fixture_id=eq.${fixtureId}`,{method:"DELETE"});
+    const rows=[];
+    for(const side of ["home","away"]){const s=lineupState[side];s.players.forEach(p=>{const pid=Number(p.id);if(s.starters.has(pid)||s.subs.has(pid))rows.push({fixture_id:Number(fixtureId),team_id:Number(s.teamId),player_id:pid,lineup_role:s.starters.has(pid)?"STARTER":"SUBSTITUTE",position:p.position||null,is_captain:s.captain===pid});});}
+    if(rows.length)await api(`${SUPABASE_URL}/rest/v1/match_lineups`,{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(rows)});
+    await api(`${SUPABASE_URL}/rest/v1/match_coaches?fixture_id=eq.${fixtureId}`,{method:"DELETE"});
+    const coachRows=[];
+    [["home",currentFixture.home_team_id],["away",currentFixture.away_team_id]].forEach(([side,teamId])=>{const head=document.getElementById(side+"HeadCoach").value.trim();const assistants=document.getElementById(side+"AssistantCoach").value.split(",").map(x=>x.trim()).filter(Boolean);if(head)coachRows.push({fixture_id:Number(fixtureId),team_id:Number(teamId),coach_role:"HEAD_COACH",coach_name:head});assistants.forEach(name=>coachRows.push({fixture_id:Number(fixtureId),team_id:Number(teamId),coach_role:"ASSISTANT_COACH",coach_name:name}));});
+    if(coachRows.length)await api(`${SUPABASE_URL}/rest/v1/match_coaches`,{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(coachRows)});
+    const officials={fixture_id:Number(fixtureId),referee:document.getElementById("officialReferee").value.trim()||null,assistant_referee_1:document.getElementById("officialAR1").value.trim()||null,assistant_referee_2:document.getElementById("officialAR2").value.trim()||null,fourth_official:document.getElementById("officialFourth").value.trim()||null};
+    await api(`${SUPABASE_URL}/rest/v1/match_officials?on_conflict=fixture_id`,{method:"POST",headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify(officials)});
+    msg.textContent="Match sheet saved successfully.";
+  }catch(e){console.error(e);msg.textContent="Could not save match sheet: "+e.message;}
+}
+
+loadTeams().then(async()=>{await loadFixtures();await loadResultFixtures();await loadMatchFixtures();await loadPlayers();await loadLeagueTable();});
+</script>
+</body>
+</html>
