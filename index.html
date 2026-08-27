@@ -162,7 +162,7 @@
       background: var(--primary);
       color: white;
       padding: 10px 15px;
-      border-radius: 9px;
+      border-radius: 99px;
       cursor: pointer;
       font-weight: 700;
     }
@@ -280,35 +280,35 @@
 <main class="container">
 
   <section id="matches">
-  <div class="section-title">
-    <h2>⚽ Match Centre</h2>
-    <span class="badge">Season 2026</span>
-  </div>
-  <div id="matchCentreGrid" class="grid">
-    <div class="card"><p>Loading matches...</p></div>
-  </div>
-</section>
+    <div class="section-title">
+      <h2>⚽ Match Centre</h2>
+      <span class="badge">Season 2026</span>
+    </div>
+    <div id="matchCentreGrid" class="grid">
+      <div class="card"><p>Loading matches...</p></div>
+    </div>
+  </section>
 
   <section id="fixtures">
-  <div class="section-title"><h2>📅 Fixtures</h2></div>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr><th>Date</th><th>Match</th><th>Venue</th><th>Kick-off</th><th>Status</th></tr>
-      </thead>
-      <tbody id="fixturesBody">
-        <tr><td colspan="5">Loading fixtures...</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+    <div class="section-title"><h2>📅 Fixtures</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Match</th><th>Venue</th><th>Kick-off</th><th>Status</th></tr>
+        </thead>
+        <tbody id="fixturesBody">
+          <tr><td colspan="5">Loading fixtures...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   <section id="results">
-  <div class="section-title"><h2>🏁 Results & Match Events</h2></div>
-  <div id="resultsGrid" class="grid grid-2">
-    <div class="card"><p>Loading results...</p></div>
-  </div>
-</section>
+    <div class="section-title"><h2>🏁 Results & Match Events</h2></div>
+    <div id="resultsGrid" class="grid grid-2">
+      <div class="card"><p>Loading results...</p></div>
+    </div>
+  </section>
 
   <section id="lineups">
     <div class="section-title"><h2>👥 Line-ups</h2></div>
@@ -331,11 +331,8 @@
         <thead>
           <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>
         </thead>
-        <tbody>
-          <tr><td>1</td><td>Team F</td><td>3</td><td>3</td><td>0</td><td>0</td><td>8</td><td>2</td><td>+6</td><td><strong>9</strong></td></tr>
-          <tr><td>2</td><td>Team A</td><td>3</td><td>2</td><td>0</td><td>1</td><td>6</td><td>4</td><td>+2</td><td><strong>6</strong></td></tr>
-          <tr><td>3</td><td>Team B</td><td>3</td><td>1</td><td>1</td><td>1</td><td>4</td><td>4</td><td>0</td><td><strong>4</strong></td></tr>
-          <tr><td>4</td><td>Team C</td><td>2</td><td>0</td><td>1</td><td>1</td><td>2</td><td>4</td><td>-2</td><td><strong>1</strong></td></tr>
+        <tbody id="leagueTableBody">
+          <tr><td colspan="10">Loading league table...</td></tr>
         </tbody>
       </table>
     </div>
@@ -494,6 +491,7 @@
     const grid = document.getElementById("matchCentreGrid");
     const fixturesBody = document.getElementById("fixturesBody");
     const resultsGrid = document.getElementById("resultsGrid");
+    const leagueTableBody = document.getElementById("leagueTableBody");
 
     try {
       const [fixtures, teams] = await Promise.all([
@@ -513,11 +511,13 @@
       renderMatchCentre(enriched, grid);
       renderFixtures(enriched, fixturesBody);
       renderResults(enriched, resultsGrid);
+      renderLeagueTable(teams, fixtures, leagueTableBody);
     } catch (error) {
       console.error("Match Centre loading error:", error);
       grid.innerHTML = `<div class="card"><p>Unable to load matches from the database.</p><p class="muted">${escapeHtml(error.message)}</p></div>`;
       fixturesBody.innerHTML = `<tr><td colspan="5">Unable to load fixtures.</td></tr>`;
       resultsGrid.innerHTML = `<div class="card"><p>Unable to load results.</p></div>`;
+      if (leagueTableBody) leagueTableBody.innerHTML = `<tr><td colspan="10">Unable to load table standings.</td></tr>`;
     }
   }
 
@@ -596,26 +596,4 @@
         <h3>${escapeHtml(f.homeName)} ${f.home_goals} - ${f.away_goals} ${escapeHtml(f.awayName)}</h3>
         <p>📍 ${escapeHtml(f.venue || "Venue not set")}</p>
         <p>🏁 Full Time</p>
-        <p class="muted">${escapeHtml(formatDate(f.match_date))} • ${escapeHtml(formatTime(f.match_time))}</p>
-      </div>`).join("");
-  }
-
-  function showMatchDetails(match) {
-    alert(match + "\\n\\nMatch details are loaded from the tournament database.");
-  }
-
-  function adminLogin(role) {
-    alert(role + "\\n\\nConnect this button to your secure authentication system.");
-  }
-
-  function submitComplaint(event) {
-    event.preventDefault();
-    alert("Demo only: connect this form to a secure backend before collecting private complaints.");
-  }
-
-  loadMatchCentre();
-  setInterval(loadMatchCentre, 30000);
-</script>
-
-</body>
-</html>
+        <p class="muted">${escapeHtml(formatDate(f.m
