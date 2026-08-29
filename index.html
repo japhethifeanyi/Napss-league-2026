@@ -865,15 +865,50 @@
     }
   }
 
+  async function loadTopScorers() {
+    const container = document.getElementById("topScorersList");
+    if (!container) return;
+
+    container.innerHTML = "<p>Loading top scorers...</p>";
+
+    try {
+        const { data, error } = await supabase
+            .from("player_statistics")
+            .select("first_name,last_name,goals")
+            .order("goals", { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            container.innerHTML = "<p>No goals recorded yet.</p>";
+            return;
+        }
+
+        container.innerHTML = data.map((player, index) => `
+            <p>${index + 1}. ${player.first_name} ${player.last_name} - ${player.goals} goals</p>
+        `).join("");
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p>Unable to load top scorers.</p>";
+    }
+  }
   function closePlayerHistory(event){
     if(event && event.target && event.target.id!=="playerHistoryModal") return;
     document.getElementById("playerHistoryModal").style.display="none";
   }
 
   loadMatchCentre();
-  loadVisitorFixtures();
-  loadVisitorPlayers();
-  setInterval(() => { loadMatchCentre(); loadVisitorFixtures(); loadVisitorPlayers(); }, 30000);
+loadVisitorFixtures();
+loadVisitorPlayers();
+loadTopScorers();
+
+setInterval(() => {
+    loadMatchCentre();
+    loadVisitorFixtures();
+    loadVisitorPlayers();
+    loadTopScorers();
+}, 30000);
 </script>
 
 </body>
