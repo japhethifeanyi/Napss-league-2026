@@ -488,9 +488,14 @@
   <p>© 2026 Tournament Management • All Rights Reserved</p>
 </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = "https://tuvszqwiqewuuvwwnvfh.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_oB96dEr1i2agcKeunapHjA_5AzYUwnD";
+  const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
   const headers = {
     "apikey": SUPABASE_ANON_KEY,
