@@ -890,7 +890,7 @@
         `).join("");
     } catch (err) {
         console.error(err);
-        container.innerHTML = "<p>Unable to load top scorers.</p>";
+ container.innerHTML = `<p>${err.message}</p>`;       
     }
   }
   function closePlayerHistory(event){
