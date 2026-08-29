@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Football Tournament Match Centre">
+  <title>⚽ Match Centre | Football Tournament</title>
+
+  <style>
+    :root {
+      --primary: #0b5d1e;
+      --primary-dark: #063d14;
+      --accent: #e63946;
+      --gold: #f4b400;
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --text: #17201a;
+      --muted: #68736c;
+      --border: #dfe6e1;
+      --danger: #c62828;
+      --success: #16803c;
+      --shadow: 0 6px 20px rgba(0,0,0,.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: white;
+      padding: 18px 5%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 3px 12px rgba(0,0,0,.2);
+    }
+
+    .nav {
+      max-width: 1250px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-size: 1.35rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    nav a {
+      padding: 8px 11px;
+      border-radius: 8px;
+      font-size: .88rem;
+    }
+
+    nav a:hover { background: rgba(255,255,255,.14); }
+
+    .hero {
+      background: linear-gradient(rgba(3,42,14,.82), rgba(3,42,14,.82)),
+                  url("https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1800&q=80")
+                  center/cover;
+      color: white;
+      text-align: center;
+      padding: 85px 20px;
+    }
+
+    .hero h1 { font-size: clamp(2.1rem, 5vw, 4rem); margin-bottom: 12px; }
+    .hero p { max-width: 760px; margin: auto; opacity: .92; }
+
+    .container {
+      max-width: 1250px;
+      margin: auto;
+      padding: 45px 20px;
+    }
+
+    section { scroll-margin-top: 90px; margin-bottom: 55px; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      color: var(--primary-dark);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    .match-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .live {
+      display: inline-block;
+      background: var(--danger);
+      color: white;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .teams {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 15px;
+      text-align: center;
+      margin: 18px 0;
+    }
+
+    .team { font-weight: 800; font-size: 1.1rem; }
+    .score { font-size: 2rem; font-weight: 900; }
+    .muted { color: var(--muted); font-size: .9rem; }
+
+    .btn {
+      display: inline-block;
+      border: 0;
+      background: var(--primary);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn:hover { background: var(--primary-dark); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    th, td {
+      padding: 13px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--primary);
+      color: white;
+    }
+
+    tr:hover td { background: #f0f6f2; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: .76rem;
+      font-weight: 700;
+      background: #e7f2ea;
+      color: var(--primary);
+    }
+
+    .red { color: var(--danger); font-weight: 800; }
+    .yellow { color: #a56b00; font-weight: 800; }
+
+    .media {
+      min-height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e9efeb;
+      border-radius: 12px;
+      font-size: 3rem;
+    }
+
+    .admin-card {
+      border-left: 5px solid var(--primary);
+    }
+
+    .private {
+      border-left: 5px solid var(--danger);
+      background: #fff8f8;
+    }
+
+    .lineup-controls { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px; }
+    .lineup-controls select { padding:11px 12px; border:1px solid var(--border); border-radius:9px; min-width:260px; background:white; font-size:1rem; }
+    .lineup-team-title { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:14px; }
+    .lineup-list { display:grid; gap:8px; }
+    .lineup-player { display:flex; align-items:center; gap:10px; padding:9px; border:1px solid var(--border); border-radius:10px; background:#fbfdfc; }
+    .lineup-player img, .player-mini-photo { width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #dfe6e1; background:#eef3ef; flex:0 0 48px; }
+    .lineup-player .num { font-weight:800; min-width:28px; }
+    .lineup-player .name { font-weight:700; }
+    .lineup-player .role { margin-left:auto; font-size:.78rem; font-weight:800; padding:3px 7px; border-radius:10px; background:#e7f2ea; color:var(--primary); }
+    .lineup-player.captain .role { background:#fff0c2; color:#8a5a00; }
+    .sub-list { margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }
+    .staff-box { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
+    .officials-card { margin-top:18px; }
+    .official-row { display:grid; grid-template-columns:160px 1fr; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+    .official-row:last-child { border-bottom:0; }
+    .player-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .player-profile { text-align:center; }
+    .player-profile img, .player-profile .placeholder { width:92px; height:92px; border-radius:50%; object-fit:cover; margin:0 auto 10px; border:3px solid #e1e9e4; background:#eef3ef; display:flex; align-items:center; justify-content:center; font-size:2rem; }
+    .player-profile h4 { margin-bottom:2px; color:var(--primary-dark); }
+    .player-profile p { font-size:.85rem; color:var(--muted); }
+
+    footer {
+      background: #071d0c;
+      color: white;
+      text-align: center;
+      padding: 35px 20px;
+      margin-top: 40px;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      background: #fff7df;
+      border: 1px solid #f1d78a;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    
+.award-banner { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+.award-banner h3 { margin:0; font-size:1.35rem; color:var(--primary-dark); }
+.award-banner p { margin-top:8px; color:var(--muted); max-width: 760px; }
+.award-kicker { text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; color:var(--muted); font-weight:900; margin-bottom:6px; }
+.award-podium { display:grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap:14px; }
+.podium-card {
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  background: linear-gradient(180deg,#fff,#fbfdfc);
+  box-shadow: var(--shadow);
+  text-align:center;
+}
+.podium-card.gold { border-color:#f1d78a; background: linear-gradient(180deg,#fffbe9,#fff); }
+.podium-card.silver { border-color:#d9e1ea; }
+.podium-card.bronze { border-color:#e8c6a6; }
+.podium-rank { font-size:.76rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px; }
+.podium-photo img, .podium-photo .placeholder { width:88px; height:88px; border-radius:50%; object-fit:cover; border:3px solid #e7f2ea; background:#eef3ef; margin:0 auto 10px; display:block; }
+.podium-name { font-weight:900; color:var(--primary-dark); }
+.podium-team { color:var(--muted); font-size:.88rem; }
+.podium-rating { margin-top:8px; font-weight:800; color:var(--primary); }
+
+.award-section {
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+  background:linear-gradient(180deg,#fff,#fbfdfc);
+  box-shadow:var(--shadow);
+}
+.award-section-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.award-section-head h3 { margin:0; color:var(--primary-dark); }
+.award-section-head .muted { margin:0; }
+
+.award-collection { display:grid; gap:18px; }
+
+
+.award-archive-wrap { margin-top: 16px; display: grid; gap: 14px; }
+.award-archive-panel { border: 1px solid var(--border); border-radius: 16px; background: #fff; box-shadow: var(--shadow); padding: 16px; }
+.award-archive-panel h3 { margin-bottom: 6px; color: var(--primary-dark); }
+.award-archive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 12px; }
+.archive-card { border: 1px solid var(--border); border-radius: 14px; padding: 14px; background: linear-gradient(180deg, #ffffff, #fbfdfc); box-shadow: 0 6px 16px rgba(0,0,0,.05); }
+.archive-card.active { border-color: var(--primary); box-shadow: 0 8px 20px rgba(11,93,30,.12); }
+.archive-card h4 { margin: 0 0 6px; color: var(--primary-dark); }
+.archive-meta { font-size: .9rem; color: var(--muted); line-height: 1.45; }
+.archive-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.archive-btn { border: 0; border-radius: 10px; padding: 8px 11px; cursor: pointer; font-weight: 700; background: var(--primary); color: #fff; }
+.archive-btn.secondary { background: #eef4f0; color: var(--primary-dark); }
+.award-print-bar { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+@media print {
+  header, footer, .award-print-bar, .award-archive-panel .archive-actions, .award-season-toolbar .btn, nav, .hero, #matches, #fixtures, #results, #lineups, #players, #table, #stats, #media, #news, #rules, #disciplinary, #complaints, #admin { display:none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+  section#awards { margin: 0 !important; }
+  #awards, #awards * { box-shadow: none !important; }
+  #awardsArchive { break-inside: avoid; }
+  .award-archive-panel, .award-section, .award-podium, .award-stat, .podium-card, .formation-pitch, .card { break-inside: avoid; }
+  #awardsDashboard .award-collection { gap: 12px; }
+}
+
+@media (max-width: 900px) {
+      .grid, .grid-2 { grid-template-columns: repeat(2, 1fr); }
+      .nav { flex-direction: column; }
+      nav { justify-content: center; }
+    }
+
+    
+.award-launch-card { margin-top: 18px; border: 1px solid #dfe7e2; border-radius: 16px; background: linear-gradient(180deg, #ffffff, #f7fbf8); padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,.04); }
+.award-launch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.launch-tick { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid #dfe7e2; border-radius: 10px; background: #fff; }
+.launch-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); margin-top: 6px; flex: 0 0 10px; box-shadow: 0 0 0 4px rgba(11,93,30,.08); }
+.launch-tick strong { display:block; margin-bottom:2px; }
+.launch-tick span { color: var(--muted); font-size: .9rem; }
+
+@media (max-width: 600px) {
+      .grid, .grid-2 { grid-template-columns: 1fr; }
+      .hero { padding: 65px 18px; }
+      th, td { padding: 9px 7px; font-size: .84rem; }
+      .table-wrap { overflow-x: auto; }
+    }
+  </style>
+
+<style>
+.player-profile{cursor:pointer;transition:.15s}
+.player-profile:hover{transform:translateY(-2px)}
+.player-profile img,.player-profile .placeholder{width:96px;height:96px;border-radius:50%;object-fit:cover;margin:auto;display:block;background:#eef4f0;border:2px solid #dfe7e2}
+.player-history-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999}
+.player-history-box{background:#fff;width:min(620px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:20px;position:relative}
+.player-history-close{position:absolute;right:12px;top:8px;border:0;background:transparent;font-size:30px;cursor:pointer}
+.history-head{text-align:center;padding:8px 0 18px}
+.history-head img,.history-head .placeholder{width:110px;height:110px;border-radius:50%;object-fit:cover;margin:auto;display:block;background:#eef4f0;border:2px solid #dfe7e2}
+.history-row{border:1px solid #e1e7e3;border-radius:12px;padding:12px;margin:9px 0;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.history-result{font-weight:800}
+.history-muted{color:#68756e;font-size:.86rem}
+</style>
+
+<style>
+.award-season-toolbar { display: grid; grid-template-columns: 1fr 1.2fr auto; gap: 14px; align-items: end; }
+.award-season-toolbar label { display:block; margin-bottom:6px; }
+.award-season-toolbar select { width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fff; font-size:1rem; }
+.award-season-toolbar .muted { margin-top: 6px; }
+
+.award-shell { display:grid; gap:18px; }
+.award-hero { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.award-stat {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: linear-gradient(180deg, #ffffff, #fbfdfc);
+  box-shadow: var(--shadow);
+}
+.award-stat h3 { margin-bottom: 8px; color: var(--primary-dark); }
+.award-value { font-size: 1.35rem; font-weight: 900; color: var(--primary); margin-bottom: 6px; }
+.award-meta { color: var(--muted); font-size: .9rem; line-height: 1.45; }
+.award-mini-row { display:flex; gap:12px; align-items:center; margin-top:10px; }
+.award-mini-photo { width:52px; height:52px; border-radius:50%; object-fit:cover; border:2px solid #dfe6e1; background:#eef3ef; flex:0 0 52px; }
+
+.award-grid-2 { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px; }
+.formation-pitch {
+  background: linear-gradient(180deg, #0c4f22, #0a3b18);
+  border-radius: 18px;
+  padding: 18px;
+  color: #fff;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.formation-pitch h3, .formation-pitch p { color:#fff; }
+.formation-row { display:grid; gap:10px; margin: 14px 0; justify-items:center; }
+.formation-row.gk { grid-template-columns: 1fr; }
+.formation-row.def { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.formation-row.mid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.formation-row.fw { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.formation-card {
+  width: 100%;
+  max-width: 170px;
+  background: rgba(255,255,255,.96);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 10px;
+  text-align:center;
+  box-shadow: 0 6px 16px rgba(0,0,0,.14);
+  border: 1px solid rgba(255,255,255,.5);
+}
+.formation-card img, .formation-card .placeholder {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 8px;
+  display: block;
+  background: #eef3ef;
+  border: 2px solid #dfe6e1;
+  font-size: 1.1rem;
+  line-height: 50px;
+}
+.formation-card .name { font-weight: 800; font-size: .92rem; }
+.formation-card .team { font-size: .8rem; color: var(--muted); margin-top: 2px; }
+.formation-card .rating { font-size: .83rem; font-weight: 800; color: var(--primary); margin-top: 4px; }
+
+.award-badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.award-chip { display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius:999px; background:#e7f2ea; color:var(--primary-dark); font-size:.82rem; font-weight:700; }
+.award-chip.gold { background:#fff0c2; color:#8a5a00; }
+.award-chip.red { background:#fdeaea; color:#a41d1d; }
+.award-chip.neutral { background:#eef4f0; color:var(--primary-dark); }
+
+.award-table-wrap { overflow-x:auto; }
+.award-note { font-size:.9rem; color: var(--muted); margin-top:6px; }
+@media (max-width: 900px) {
+  .award-season-toolbar { grid-template-columns: 1fr; }
+  .award-banner { flex-direction:column; }
+  .award-podium { grid-template-columns: 1fr; }
+  .formation-row.def, .formation-row.mid, .formation-row.fw { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .formation-row.def, .formation-row.mid, .formation-row.fw { grid-template-columns: 1fr; }
+  .formation-card { max-width: none; }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">⚽ Match Centre</div>
+    <nav>
+      <a href="#matches">Matches</a>
+      <a href="#table">League Table</a>
+      <a href="#players">Players</a>
+      <a href="#stats">Statistics</a>
+      <a href="#awards">Awards</a>
+      <a href="#media">Media</a>
+      <a href="#news">News</a>
+      <a href="#rules">Rules</a>
+      <a href="#admin">Admin</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>⚽ Football Tournament Match Centre</h1>
+  <p>Fixtures, live scores, results, match events, statistics, awards, media, announcements and tournament administration.</p>
+</section>
+
+<main class="container">
+
+  <section id="matches">
+  <div class="section-title">
+    <h2>⚽ Match Centre</h2>
+    <span class="badge">Season 2026</span>
+  </div>
+  <div id="matchCentreGrid" class="grid">
+    <div class="card"><p>Loading matches...</p></div>
+  </div>
+</section>
+
+  <section id="fixtures">
+  <div class="section-title"><h2>📅 Fixtures</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Match</th><th>Venue</th><th>Kick-off</th><th>Status</th></tr>
+      </thead>
+      <tbody id="fixturesBody">
+        <tr><td colspan="5">Loading fixtures...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+  <section id="results">
+  <div class="section-title"><h2>🏁 Latest Results</h2></div>
+  <p class="muted" style="margin-top:-10px;margin-bottom:14px">Most recent completed matches from the tournament database.</p>
+  <div id="resultsGrid" class="grid grid-2">
+    <div class="card"><p>Loading results...</p></div>
+  </div>
+</section>
+
+  <section id="lineups">
+    <div class="section-title"><h2>👥 Match Line-ups</h2></div>
+    <div class="lineup-controls">
+      <select id="visitorFixtureSelect" onchange="loadVisitorMatchSheet()">
+        <option value="">Select a fixture to view line-up</option>
+      </select>
+    </div>
+    <div id="visitorLineupArea">
+      <div class="card"><p>Select a fixture above to view the official Starting XI, substitutes, coaches and match officials.</p></div>
+    </div>
+  </section>
+
+  <section id="players">
+    <div class="section-title"><h2>⭐ Players</h2></div>
+    <div id="visitorPlayersArea" class="player-grid">
+      <div class="card"><p>Loading players...</p></div>
+    </div>
+  </section>
+
+  <section id="table">
+    <div class="section-title"><h2>📊 League Table</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>
+        </thead>
+        <tbody id="leagueTableBody">
+          <tr><td colspan="10">Loading league table...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="stats">
+    <div class="section-title"><h2>📈 Player & Team Statistics</h2></div>
+    <div class="grid">
+    <div class="card">
+    <h3>🥇 Top Scorers</h3>
+    <div id="topScorersList">
+        <p>Loading top scorers...</p>
+    </div>
+    </div>
+      <div class="card"><h3>🎯 Assists</h3><p class="muted">No assist statistics available yet.</p><p class="muted">Assist numbers will appear once match events are recorded.</p></div>
+      <div class="card"><h3>🧤 Clean Sheets</h3><p class="muted">No clean sheet records available yet.</p><p class="muted">Clean sheets will appear after completed matches are recorded.</p></div>
+      <div class="card">
+        <h3>👤 Player Statistics</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Player</th><th>Apps</th><th>Goals</th><th>YC</th><th>RC</th></tr>
+            </thead>
+            <tbody id="playerStatsBody">
+              <tr><td colspan="5">Loading player statistics...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>📈 Team Statistics</h3>
+        <div id="teamStatistics">
+          <p>Loading team statistics...</p>
+        </div>
+      </div>
+      <div class="card"><h3>📝 Match Events</h3><p>Goals • Cards • Substitutions • VAR • Penalties • Own goals</p></div>
+    </div>
+  </section>
+
+  <section id="awards">
+  <div class="section-title">
+    <h2>🏆 Awards</h2>
+    <span id="awardsSeasonBadge" class="badge">Loading awards...</span>
+  </div>
+
+  <div class="card" style="margin-bottom:18px;">
+    <div class="award-season-toolbar">
+      <div>
+        <label for="awardSeasonSelect">Season</label>
+        <select id="awardSeasonSelect" onchange="loadAwardsDashboard()">
+          <option value="">Loading seasons...</option>
+        </select>
+      </div>
+      <div>
+        <label>Publication mode</label>
+        <div class="muted">Official winners are read from <strong>tournament_awards</strong>. If a season has not been published yet, the page falls back to live competition leaders.</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;align-items:flex-end;">
+        <button class="btn" type="button" onclick="loadAwardsDashboard()">↻ Refresh Awards</button>
+      </div>
+    </div>
+    <div class="award-note" style="margin-top:12px;">Awards are now presented like a tournament ceremony: live leaders, official winners, podium cards, Best XI and top rankings all share the same page.</div>
+  </div>
+
+  <div id="awardsDashboard">
+    <div class="card"><p>Loading awards...</p></div>
+  </div>
+
+  <div class="award-archive-wrap">
+    <div class="award-archive-panel">
+      <div class="section-title" style="margin-bottom:8px;align-items:center;">
+        <div>
+          <h3>🏛 Awards Archive</h3>
+          <p class="muted">Review official winners from previous seasons. Use the buttons to print or save the current awards page as a PDF from your browser.</p>
+        </div>
+        <div class="award-print-bar">
+          <button class="btn" type="button" onclick="printAwards()">🖨 Print Awards</button>
+          <button class="btn" type="button" onclick="downloadAwardsPdf()">⬇ Download PDF</button>
+        </div>
+      </div>
+      <div id="awardsArchive" class="award-archive-grid">Loading archive...</div>
+    </div>
+  </div>
+
+  <div class="award-launch-card">
+    <div class="section-title" style="margin-bottom:8px;align-items:center;">
+      <div>
+        <h3>🚀 Launch Ready</h3>
+        <p class="muted">Final polish is complete: live data, archive seasons, printable awards and mobile-friendly layouts are all in place.</p>
+      </div>
+      <span class="badge">Phase 6</span>
+    </div>
+    <div class="award-launch-grid">
+      <div class="launch-tick"><div class="launch-dot"></div><div><strong>Live awards data</strong><span>Season leaders and winners update from Supabase.</span></div></div>
+      <div class="launch-tick"><div class="launch-dot"></div><div><strong>Archive support</strong><span>Past seasons stay available for review.</span></div></div>
+      <div class="launch-tick"><div class="launch-dot"></div><div><strong>Printable output</strong><span>Save as PDF or print for award ceremonies.</span></div></div>
+      <div class="launch-tick"><div class="launch-dot"></div><div><strong>Mobile friendly</strong><span>Cards and tables remain readable on phones.</span></div></div>
+    </div>
+  </div>
+</section>
+
+  <section id="media">
+    <div class="section-title"><h2>📸 Media Centre</h2></div>
+    <div class="grid">
+      <div class="card"><div class="media">📸</div><h3>Photos</h3><p>Upload and display match photographs.</p></div>
+      <div class="card"><div class="media">🎥</div><h3>Videos</h3><p>Upload match videos and interviews.</p></div>
+      <div class="card"><div class="media">⭐</div><h3>Highlights</h3><p>Featured goals and match highlights.</p></div>
+      <div class="card"><div class="media">👥</div><h3>Team Photos</h3><p>Official team and squad photographs.</p></div>
+    </div>
+  </section>
+
+  <section id="news">
+    <div class="section-title"><h2>📢 Announcements & News</h2></div>
+    <div class="notice"><strong>📢 Tournament Update:</strong> Latest tournament announcements will appear here.</div>
+    <div class="grid">
+      <div class="card"><h3>Latest News</h3><p>Match reports, tournament updates and important information.</p></div>
+      <div class="card"><h3>📢 Official Announcements</h3><p>Official notices from tournament management.</p></div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="section-title"><h2>📜 Rules & Regulations</h2></div>
+    <div class="card">
+      <h3>Tournament Regulations</h3>
+      <ol style="padding-left:20px">
+        <li>All teams must comply with tournament registration requirements.</li>
+        <li>Players must be properly registered before participating.</li>
+        <li>Match officials have authority over match-day decisions.</li>
+        <li>Disciplinary decisions shall follow the official tournament rules.</li>
+        <li>Organizers may publish amendments and official notices.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="disciplinary">
+    <div class="section-title"><h2>🚨 Disciplinary Notices</h2></div>
+    <div class="card">
+      <h3>Official Disciplinary Notices</h3>
+      <p>No current disciplinary notices.</p>
+    </div>
+  </section>
+
+  <section id="complaints">
+    <div class="section-title"><h2>📝 Private Complaints Section</h2></div>
+    <div class="card private">
+      <h3>🔒 Confidential Complaint Form</h3>
+      <p class="muted">This demonstration form does not securely store complaints. Connect it to a secure backend before collecting real confidential information.</p>
+      <br>
+      <form onsubmit="submitComplaint(event)">
+        <label>Full Name<br><input required type="text" style="width:100%;padding:10px;margin:5px 0 12px"></label>
+        <label>Email<br><input required type="email" style="width:100%;padding:10px;margin:5px 0 12px"></label>
+        <label>Complaint<br><textarea required rows="5" style="width:100%;padding:10px;margin:5px 0 12px"></textarea></label>
+        <button class="btn" type="submit">Submit Complaint</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="admin">
+    <div class="section-title"><h2>🔐 Admin Section</h2></div>
+    <div class="grid">
+      <div class="card admin-card"><h3>👑 Super Admin</h3><p>Full system control, users, settings, tournament configuration and permissions.</p><button class="btn" onclick="adminLogin('Super Admin')">Admin Login</button></div>
+      <div class="card admin-card"><h3>⚽ Games Admin</h3><p>Manage fixtures, results, scores, line-ups, officials and match events.</p><button class="btn" onclick="adminLogin('Games Admin')">Admin Login</button></div>
+      <div class="card admin-card"><h3>📸 Media Admin</h3><p>Manage photos, videos, highlights, team photos and media announcements.</p><button class="btn" onclick="adminLogin('Media Admin')">Admin Login</button></div>
+      <div class="card admin-card"><h3>🚨 Disciplinary Admin</h3><p>Manage cards, suspensions, disciplinary cases and official notices.</p><button class="btn" onclick="adminLogin('Disciplinary Admin')">Admin Login</button></div>
+    </div>
+  </section>
+
+</main>
+
+
+<div id="playerHistoryModal" class="player-history-modal" onclick="closePlayerHistory(event)">
+  <div class="player-history-box" onclick="event.stopPropagation()">
+    <button class="player-history-close" onclick="closePlayerHistory()">×</button>
+    <div id="playerHistoryContent"><p>Loading...</p></div>
+  </div>
+</div>
+
+<footer>
+  <p><strong>⚽ Football Tournament Match Centre</strong></p>
+  <p>© 2026 Tournament Management • All Rights Reserved</p>
+</footer>
+
+<script>
+  const SUPABASE_URL = "https://tuvszqwiqewuuvwwnvfh.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_oB96dEr1i2agcKeunapHjA_5AzYUwnD";
+
+  const headers = {
+    "apikey": SUPABASE_ANON_KEY,
+    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+  };
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function formatDate(dateValue) {
+    if (!dateValue) return "Date not set";
+    const d = new Date(dateValue + "T00:00:00");
+    if (Number.isNaN(d.getTime())) return escapeHtml(dateValue);
+    return d.toLocaleDateString("en-GB", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    });
+  }
+
+  function formatShortDate(dateValue) {
+    if (!dateValue) return "Not set";
+    const d = new Date(dateValue + "T00:00:00");
+    if (Number.isNaN(d.getTime())) return escapeHtml(dateValue);
+    return d.toLocaleDateString("en-GB", {
+      day: "2-digit", month: "short", year: "numeric"
+    });
+  }
+
+  function formatTime(timeValue) {
+    if (!timeValue) return "Time not set";
+    const parts = String(timeValue).split(":");
+    if (parts.length < 2) return escapeHtml(timeValue);
+    let hour = Number(parts[0]);
+    const minute = parts[1];
+    if (Number.isNaN(hour)) return escapeHtml(timeValue);
+    const suffix = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    return `${hour}:${minute} ${suffix}`;
+  }
+
+  async function fetchJson(url) {
+    const response = await fetch(url, { headers });
+    if (!response.ok) throw new Error(await response.text());
+    return response.json();
+  }
+
+  async function loadVisitorFixtures() {
+    const select = document.getElementById("visitorFixtureSelect");
+    if (!select) return;
+    try {
+      const [fixtures, teams] = await Promise.all([
+        fetchJson(`${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,match_date,match_time,venue,status&order=match_date,match_time`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/teams?select=id,name&order=name`)
+      ]);
+      const map = {}; teams.forEach(t => map[t.id] = t.name);
+      select.innerHTML = '<option value="">Select a fixture to view line-up</option>';
+      fixtures.forEach(f => {
+        select.innerHTML += `<option value="${f.id}">Match #${f.id} — ${escapeHtml(map[f.home_team_id]||"Home Team")} vs ${escapeHtml(map[f.away_team_id]||"Away Team")} — ${escapeHtml(formatShortDate(f.match_date))}</option>`;
+      });
+    } catch (e) {
+      select.innerHTML = '<option value="">Unable to load fixtures</option>';
+    }
+  }
+
+  function photoMarkup(url, name) {
+    return url ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div class="placeholder">👤</div>`;
+  }
+
+  async function loadVisitorMatchSheet() {
+    const fixtureId = document.getElementById("visitorFixtureSelect").value;
+    const area = document.getElementById("visitorLineupArea");
+    if (!fixtureId) {
+      area.innerHTML = '<div class="card"><p>Select a fixture above to view the official Starting XI, substitutes, coaches and match officials.</p></div>';
+      return;
+    }
+    area.innerHTML = '<div class="card"><p>Loading match sheet...</p></div>';
+    try {
+      const [fixture, teams, lineups, coaches, officials] = await Promise.all([
+        fetchJson(`${SUPABASE_URL}/rest/v1/fixtures?id=eq.${fixtureId}&select=id,home_team_id,away_team_id,match_date,match_time,venue,status`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/teams?select=id,name`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/match_lineups?fixture_id=eq.${fixtureId}&select=fixture_id,team_id,player_id,lineup_role,position,is_captain`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/match_coaches?fixture_id=eq.${fixtureId}&select=team_id,coach_role,coach_name`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/match_officials?fixture_id=eq.${fixtureId}&select=referee,assistant_referee_1,assistant_referee_2,fourth_official`)
+      ]);
+      if (!fixture[0]) throw new Error("Fixture not found");
+      const f = fixture[0], teamMap = {}; teams.forEach(t => teamMap[t.id]=t.name);
+      const playerIds = [...new Set(lineups.map(x=>x.player_id))];
+      let players = [];
+      if (playerIds.length) players = await fetchJson(`${SUPABASE_URL}/rest/v1/players?id=in.(${playerIds.join(',')})&select=id,first_name,last_name,jersey_number,position,photo_url`);
+      const pMap={}; players.forEach(p=>pMap[p.id]=p);
+      const teamBlock=(teamId)=>{
+        const name=teamMap[teamId]||"Team";
+        const rows=lineups.filter(x=>Number(x.team_id)===Number(teamId));
+        const starters=rows.filter(x=>x.lineup_role==='STARTER').sort((a,b)=>(pMap[a.player_id]?.jersey_number??999)-(pMap[b.player_id]?.jersey_number??999));
+        const subs=rows.filter(x=>x.lineup_role==='SUBSTITUTE').sort((a,b)=>(pMap[a.player_id]?.jersey_number??999)-(pMap[b.player_id]?.jersey_number??999));
+        const coachRows=coaches.filter(c=>Number(c.team_id)===Number(teamId));
+        const playerRow=x=>{const p=pMap[x.player_id]||{};const full=`${p.first_name||"Player"} ${p.last_name||""}`.trim();return `<div class="lineup-player ${x.is_captain?'captain':''}">${p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt="${escapeHtml(full)}" loading="lazy">`:'<div class="player-mini-photo">👤</div>'}<span class="num">#${escapeHtml(p.jersey_number??'-')}</span><div><div class="name">${escapeHtml(full)}</div><div class="muted">${escapeHtml(x.position||p.position||'')}</div></div>${x.is_captain?'<span class="role">© Captain</span>':''}</div>`};
+        return `<div class="card"><div class="lineup-team-title"><h3>${escapeHtml(name)}</h3><span class="badge">${starters.length} Starters</span></div><div class="lineup-list">${starters.length?starters.map(playerRow).join(''):'<p class="muted">No Starting XI published yet.</p>'}</div><div class="sub-list"><strong>Substitutes</strong><div class="lineup-list" style="margin-top:8px">${subs.length?subs.map(playerRow).join(''):'<p class="muted">No substitutes published yet.</p>'}</div></div><div class="staff-box"><strong>Coaching Staff</strong><p class="muted">Head Coach: ${escapeHtml(coachRows.find(c=>c.coach_role==='HEAD_COACH')?.coach_name||'Not published')}</p><p class="muted">Assistant Coach: ${escapeHtml(coachRows.filter(c=>c.coach_role==='ASSISTANT_COACH').map(c=>c.coach_name).join(', ')||'Not published')}</p></div></div>`;
+      };
+      const o=officials[0]||{};
+      area.innerHTML=`<div class="notice"><strong>${escapeHtml(teamMap[f.home_team_id]||'Home Team')} vs ${escapeHtml(teamMap[f.away_team_id]||'Away Team')}</strong> · ${escapeHtml(formatDate(f.match_date))} · ${escapeHtml(formatTime(f.match_time))}</div><div class="grid grid-2">${teamBlock(f.home_team_id)}${teamBlock(f.away_team_id)}</div><div class="card officials-card"><h3>🧑‍⚖️ Match Officials</h3><div class="official-row"><strong>Referee</strong><span>${escapeHtml(o.referee||'Not published')}</span></div><div class="official-row"><strong>Assistant Referee 1</strong><span>${escapeHtml(o.assistant_referee_1||'Not published')}</span></div><div class="official-row"><strong>Assistant Referee 2</strong><span>${escapeHtml(o.assistant_referee_2||'Not published')}</span></div><div class="official-row"><strong>Fourth Official</strong><span>${escapeHtml(o.fourth_official||'Not published')}</span></div></div>`;
+    } catch(e) {
+      console.error(e);
+      area.innerHTML=`<div class="card"><p>Unable to load this match sheet.</p><p class="muted">${escapeHtml(e.message)}</p></div>`;
+    }
+  }
+
+  async function loadVisitorPlayers() {
+    const area=document.getElementById("visitorPlayersArea");
+    if(!area) return;
+    try {
+      const [players,teams]=await Promise.all([
+        fetchJson(`${SUPABASE_URL}/rest/v1/players?select=id,team_id,first_name,last_name,jersey_number,position,photo_url&order=team_id,jersey_number,last_name`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/teams?select=id,name&order=name`)
+      ]);
+      const map={};teams.forEach(t=>map[t.id]=t.name);
+      if(!players.length){area.innerHTML='<div class="card"><p>No players registered yet.</p></div>';return;}
+      area.innerHTML=players.map(p=>`<div class="card player-profile" onclick="openPlayerHistory(${Number(p.id)})">${photoMarkup(p.photo_url,`${p.first_name} ${p.last_name}`)}<h4>#${escapeHtml(p.jersey_number??'-')} ${escapeHtml(p.first_name)} ${escapeHtml(p.last_name)}</h4><p>${escapeHtml(map[p.team_id]||'Team')}</p><p>${escapeHtml(p.position||'Position not set')}</p><p class="muted">Tap to view match history →</p></div>`).join('');
+    } catch(e) {
+      area.innerHTML=`<div class="card"><p>Unable to load players.</p><p class="muted">${escapeHtml(e.message)}</p></div>`;
+    }
+  }
+
+  async function loadMatchCentre() {
+    const grid = document.getElementById("matchCentreGrid");
+    const fixturesBody = document.getElementById("fixturesBody");
+    const resultsGrid = document.getElementById("resultsGrid");
+
+    try {
+      const [fixtures, teams, leagueTable] = await Promise.all([
+        fetchJson(`${SUPABASE_URL}/rest/v1/fixtures?select=*&order=match_date,match_time`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/teams?select=id,name&order=name`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/league_table?select=team_id,team_name,played,wins,draws,losses,goals_for,goals_against,goal_difference,points&order=points.desc,goal_difference.desc,goals_for.desc,team_name.asc`)
+      ]);
+
+      const teamMap = {};
+      teams.forEach(team => teamMap[team.id] = team.name);
+
+      const enriched = fixtures.map(fixture => ({
+        ...fixture,
+        homeName: teamMap[fixture.home_team_id] || "Home Team",
+        awayName: teamMap[fixture.away_team_id] || "Away Team"
+      }));
+
+      renderMatchCentre(enriched, grid);
+      renderFixtures(enriched, fixturesBody);
+      renderResults(enriched, resultsGrid);
+      renderLeagueTable(leagueTable);
+    } catch (error) {
+      console.error("Match Centre loading error:", error);
+      grid.innerHTML = `<div class="card"><p>Unable to load matches from the database.</p><p class="muted">${escapeHtml(error.message)}</p></div>`;
+      fixturesBody.innerHTML = `<tr><td colspan="5">Unable to load fixtures.</td></tr>`;
+      resultsGrid.innerHTML = `<div class="card"><p>Unable to load results.</p></div>`;
+      const leagueTableBody = document.getElementById("leagueTableBody");
+      if (leagueTableBody) {
+        leagueTableBody.innerHTML = `<tr><td colspan="10">Unable to load league table.</td></tr>`;
+      }
+    }
+  }
+
+  function renderMatchCentre(fixtures, grid) {
+    if (!fixtures.length) {
+      grid.innerHTML = `<div class="card"><p>No fixtures have been created yet.</p></div>`;
+      return;
+    }
+
+    const completed = fixtures.filter(f =>
+      f.status === "FT" ||
+      (f.home_goals != null && f.away_goals != null)
+    );
+    const upcoming = fixtures.filter(f => !completed.includes(f));
+    const live = fixtures.filter(f => f.status === "LIVE");
+
+    let cards = [];
+    live.forEach(f => cards.push(matchCard(f, "🔴 LIVE")));
+    upcoming.slice(0, 2).forEach(f => cards.push(matchCard(f, "📅 Next Fixture")));
+    completed.slice(-2).reverse().forEach(f => cards.push(matchCard(f, "🏁 Latest Result")));
+
+    if (!cards.length) cards = fixtures.slice(0, 3).map(f => matchCard(f, "⚽ Fixture"));
+    grid.innerHTML = cards.join("");
+  }
+
+  function matchCard(fixture, label) {
+    const hasScore = fixture.home_goals != null && fixture.away_goals != null;
+    const score = hasScore ? `${fixture.home_goals} - ${fixture.away_goals}` : "VS";
+
+    let statusText = `📅 ${formatDate(fixture.match_date)} • ${formatTime(fixture.match_time)}`;
+    if (fixture.status === "FT") statusText = "🏆 Full time";
+    if (fixture.status === "LIVE") statusText = "🔴 Live";
+
+    return `
+      <div class="card match-card">
+        <span class="badge">${escapeHtml(label)}</span>
+        <h3>Match #${escapeHtml(fixture.id)}</h3>
+        <div class="teams">
+          <div class="team">${escapeHtml(fixture.homeName)}</div>
+          <div class="score">${escapeHtml(score)}</div>
+          <div class="team">${escapeHtml(fixture.awayName)}</div>
+        </div>
+        <p class="muted">📍 ${escapeHtml(fixture.venue || "Venue not set")}</p>
+        <p class="muted">${statusText}</p>
+      </div>`;
+  }
+
+  function renderFixtures(fixtures, body) {
+    if (!fixtures.length) {
+      body.innerHTML = `<tr><td colspan="5">No fixtures have been created yet.</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = fixtures.map(f => `
+      <tr>
+        <td>${escapeHtml(formatShortDate(f.match_date))}</td>
+        <td><strong>${escapeHtml(f.homeName)} vs ${escapeHtml(f.awayName)}</strong></td>
+        <td>${escapeHtml(f.venue || "Not set")}</td>
+        <td>${escapeHtml(formatTime(f.match_time))}</td>
+        <td>${escapeHtml(f.status || "UPCOMING")}</td>
+      </tr>`).join("");
+  }
+
+  function renderLeagueTable(rows) {
+    const body = document.getElementById("leagueTableBody");
+    if (!body) return;
+
+    if (!rows || !rows.length) {
+      body.innerHTML = `<tr><td colspan="10">No league data available yet.</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = rows.map((row, index) => {
+      const gd = Number(row.goal_difference ?? 0);
+      const gdText = gd > 0 ? `+${gd}` : String(gd);
+      return `
+        <tr>
+          <td>${index + 1}</td>
+          <td><strong>${escapeHtml(row.team_name || "Unknown Team")}</strong></td>
+          <td>${Number(row.played ?? 0)}</td>
+          <td>${Number(row.wins ?? 0)}</td>
+          <td>${Number(row.draws ?? 0)}</td>
+          <td>${Number(row.losses ?? 0)}</td>
+          <td>${Number(row.goals_for ?? 0)}</td>
+          <td>${Number(row.goals_against ?? 0)}</td>
+          <td>${gdText}</td>
+          <td><strong>${Number(row.points ?? 0)}</strong></td>
+        </tr>`;
+    }).join("");
+  }
+
+  function renderResults(fixtures, grid) {
+    const results = fixtures.filter(f =>
+      f.status === "FT" && f.home_goals != null && f.away_goals != null
+    ).reverse().slice(0, 6);
+
+    if (!results.length) {
+      grid.innerHTML = `<div class="card"><p>No completed matches yet.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = results.map(f => `
+      <div class="card">
+        <h3>${escapeHtml(f.homeName)} ${f.home_goals} - ${f.away_goals} ${escapeHtml(f.awayName)}</h3>
+        <p>📍 ${escapeHtml(f.venue || "Venue not set")}</p>
+        <p>🏁 Full Time</p>
+        <p class="muted">${escapeHtml(formatDate(f.match_date))} • ${escapeHtml(formatTime(f.match_time))}</p>
+      </div>`).join("");
+  }
+
+  function showMatchDetails(match) {
+    alert(match + "\\n\\nMatch details are loaded from the tournament database.");
+  }
+
+  function adminLogin(role) {
+    alert(role + "\\n\\nConnect this button to your secure authentication system.");
+  }
+
+  function submitComplaint(event) {
+    event.preventDefault();
+    alert("Demo only: connect this form to a secure backend before collecting private complaints.");
+  }
+
+
+  async function openPlayerHistory(playerId){
+    const modal=document.getElementById("playerHistoryModal");
+    const content=document.getElementById("playerHistoryContent");
+    modal.style.display="flex";
+    content.innerHTML="<p>Loading match history...</p>";
+
+    try{
+      const [players, teams, lineups, fixtures, events] = await Promise.all([
+        fetchJson(`${SUPABASE_URL}/rest/v1/players?id=eq.${playerId}&select=id,team_id,first_name,last_name,jersey_number,position,photo_url`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/teams?select=id,name`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/match_lineups?player_id=eq.${playerId}&select=fixture_id,team_id,lineup_role,position,is_captain`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,match_date,match_time,venue,status,home_goals,away_goals&order=match_date.desc,match_time.desc`),
+        fetchJson(`${SUPABASE_URL}/rest/v1/match_events?player_id=eq.${playerId}&select=id,fixture_id,event_type,minute&order=minute.asc`)
+      ]);
+
+      const p=players[0];
+      if(!p) throw new Error("Player not found.");
+
+      const teamMap={};
+      teams.forEach(t=>teamMap[t.id]=t.name);
+
+      const playedRows=lineups.filter(x=>fixtures.some(f=>Number(f.id)===Number(x.fixture_id)));
+      const fixtureMap={};
+      fixtures.forEach(f=>fixtureMap[f.id]=f);
+
+      const history=playedRows.map(x=>{
+        const f=fixtureMap[x.fixture_id];
+        if(!f) return null;
+        const home=teamMap[f.home_team_id]||"Home Team";
+        const away=teamMap[f.away_team_id]||"Away Team";
+        const isHome=Number(p.team_id)===Number(f.home_team_id);
+        const gf=isHome?f.home_goals:f.away_goals;
+        const ga=isHome?f.away_goals:f.home_goals;
+        let result="Match";
+        if(gf!=null && ga!=null){
+          result=Number(gf)>Number(ga)?"Win":Number(gf)<Number(ga)?"Loss":"Draw";
+        }
+        return {...x,f,home,away,isHome,gf,ga,result};
+      }).filter(Boolean);
+
+      const unique={};
+      history.forEach(x=>{
+        // One player can have more than one lineup record for a fixture; keep one.
+        unique[x.fixture_id]=x;
+      });
+      const rows=Object.values(unique).sort((a,b)=>String(b.f.match_date).localeCompare(String(a.f.match_date)));
+
+      const photo=p.photo_url
+        ? `<img src="${escapeHtml(p.photo_url)}" alt="${escapeHtml(p.first_name+" "+p.last_name)}">`
+        : `<div class="placeholder"></div>`;
+
+      const historyHtml=rows.length
+        ? rows.map(x=>`<div class="history-row">
+            <div>
+              <div><strong>${escapeHtml(x.home)} vs ${escapeHtml(x.away)}</strong></div>
+              <div class="history-muted">${escapeHtml(formatShortDate(x.f.match_date))} • ${escapeHtml(formatTime(x.f.match_time))}</div>
+              <div class="history-muted">${escapeHtml(x.lineup_role==="STARTER"?"Starting XI":"Substitute")}${x.is_captain?" • © Captain":""}</div>
+            </div>
+            <div class="history-result">${x.f.home_goals!=null&&x.f.away_goals!=null?`${escapeHtml(x.f.home_goals)} - ${escapeHtml(x.f.away_goals)}`:escapeHtml(x.result)}</div>
+          </div>`).join("")
+        : `<div class="card"><p>No match history has been published for this player yet.</p><p class="history-muted">The history will appear automatically after the player is added to a match sheet.</p></div>`;
+
+      const eventRows=(events||[]).filter(e=>fixtureMap[e.fixture_id]);
+      const eventHtml=eventRows.length
+        ? `<h3>⚡ Match Events</h3>` + eventRows.map(e=>{
+            const f=fixtureMap[e.fixture_id];
+            const home=teamMap[f.home_team_id]||"Home Team";
+            const away=teamMap[f.away_team_id]||"Away Team";
+            const label=(e.event_type||"Event").replace(/_/g," ").replace(/\\b\\w/g,c=>c.toUpperCase());
+            return `<div class="history-row"><div><strong>${escapeHtml(home)} vs ${escapeHtml(away)}</strong><div class="history-muted">${escapeHtml(formatShortDate(f.match_date))}</div></div><div class="history-result">${escapeHtml(label)}${e.minute!=null?` • ${escapeHtml(e.minute)}'`:""}</div></div>`;
+          }).join("")
+        : "";
+
+      content.innerHTML=`
+        <div class="history-head">
+          ${photo}
+          <h2>#${escapeHtml(p.jersey_number??"-")} ${escapeHtml(p.first_name)} ${escapeHtml(p.last_name)}</h2>
+          <p class="history-muted">${escapeHtml(teamMap[p.team_id]||"Team")} • ${escapeHtml(p.position||"Position not set")}</p>
+        </div>
+        <h3>📋 Match History</h3>
+        ${historyHtml}
+        ${eventHtml}`;
+    }catch(e){
+      console.error(e);
+      content.innerHTML=`<div class="card"><p>Unable to load match history.</p><p class="history-muted">${escapeHtml(e.message)}</p></div>`;
+    }
+  }
+
+
+async function loadPlayerStatsTable() {
+  const body = document.getElementById("playerStatsBody");
+  if (!body) return;
+
+  body.innerHTML = '<tr><td colspan="5">Loading player statistics...</td></tr>';
+
+  try {
+    const data = await fetchJson(
+      `${SUPABASE_URL}/rest/v1/player_statistics?select=first_name,last_name,appearances,goals,yellow_cards,red_cards&order=goals.desc,appearances.desc,last_name.asc`
+    );
+
+    if (!data || data.length === 0) {
+      body.innerHTML = '<tr><td colspan="5">No player statistics available yet.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = data.map(player => `
+      <tr>
+        <td><strong>${escapeHtml(player.first_name)} ${escapeHtml(player.last_name)}</strong></td>
+        <td>${Number(player.appearances ?? 0)}</td>
+        <td>${Number(player.goals ?? 0)}</td>
+        <td>${Number(player.yellow_cards ?? 0)}</td>
+        <td>${Number(player.red_cards ?? 0)}</td>
+      </tr>
+    `).join("");
+  } catch (err) {
+    console.error(err);
+    body.innerHTML = `<tr><td colspan="5">${escapeHtml(err.message)}</td></tr>`;
+  }
+}
+
+  async function loadTopScorers() {
+    const container = document.getElementById("topScorersList");
+    if (!container) return;
+
+    container.innerHTML = "<p>Loading top scorers...</p>";
+
+    try {
+        const { data, error } = await supabase
+            .from("player_statistics")
+            .select("first_name,last_name,goals")
+            .order("goals", { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            container.innerHTML = "<p>No goals recorded yet.</p>";
+            return;
+        }
+
+        container.innerHTML = data.map((player, index) => `
+            <p>${index + 1}. ${player.first_name} ${player.last_name} - ${player.goals} goals</p>
+        `).join("");
+    } catch (err) {
+        console.error(err);
+ container.innerHTML = `<p>${err.message}</p>`;       
+    }
+  }
+  
+async function loadTopScorers() {
+ const container=document.getElementById("topScorersList"); if(!container)return;
+ container.innerHTML="<p>Loading top scorers...</p>";
+ try{ const data=await fetchJson(`${SUPABASE_URL}/rest/v1/player_statistics?select=first_name,last_name,goals&order=goals.desc&limit=10`);
+ if(!data.length){container.innerHTML="<p>No goals recorded yet.</p>";return;}
+ container.innerHTML=data.map((p,i)=>`<p>${i+1}. ${p.first_name} ${p.last_name} - ${p.goals} goals</p>`).join('');
+ }catch(err){console.error(err);container.innerHTML=`<p>${err.message}</p>`;}
+}
+
+
+async function loadTeamStatistics() {
+  const container = document.getElementById("teamStatistics");
+  if (!container) return;
+
+  container.innerHTML = "<p>Loading team statistics...</p>";
+
+  try {
+    const [teams, players, stats, fixtures] = await Promise.all([
+      fetchJson(`${SUPABASE_URL}/rest/v1/teams?select=id`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/players?select=id`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/player_statistics?select=goals,yellow_cards,red_cards`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/fixtures?select=id,status,home_goals,away_goals`)
+    ]);
+
+    const totalTeams = teams?.length ?? 0;
+    const totalPlayers = players?.length ?? 0;
+    const totalGoals = (stats || []).reduce((sum, row) => sum + Number(row.goals ?? 0), 0);
+    const totalYellow = (stats || []).reduce((sum, row) => sum + Number(row.yellow_cards ?? 0), 0);
+    const totalRed = (stats || []).reduce((sum, row) => sum + Number(row.red_cards ?? 0), 0);
+
+    const completedMatches = (fixtures || []).filter(f => {
+      const status = String(f.status || "").toUpperCase();
+      return status === "FT" || status === "COMPLETED" || (f.home_goals != null && f.away_goals != null);
+    }).length;
+
+    const avgGoals = completedMatches > 0 ? (totalGoals / completedMatches) : 0;
+
+    container.innerHTML = `
+      <p><strong>👥 Total Teams:</strong> ${totalTeams}</p>
+      <p><strong>👤 Registered Players:</strong> ${totalPlayers}</p>
+      <p><strong>⚽ Total Goals:</strong> ${totalGoals}</p>
+      <p><strong>🏟️ Completed Matches:</strong> ${completedMatches}</p>
+      <p><strong>📈 Average Goals/Match:</strong> ${avgGoals.toFixed(2)}</p>
+      <p><strong>🟨 Yellow Cards:</strong> ${totalYellow}</p>
+      <p><strong>🟥 Red Cards:</strong> ${totalRed}</p>
+    `;
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
+  }
+}
+
+function defaultSeasonLabel() {
+  const now = new Date();
+  const startYear = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
+  return `${startYear}/${startYear + 1}`;
+}
+
+function seasonSortValue(season) {
+  const match = String(season || "").match(/(\d{4})/);
+  return match ? Number(match[1]) : 0;
+}
+
+function displayNameFromPerson(firstName, lastName, jerseyNumber) {
+  const jersey = jerseyNumber != null && jerseyNumber !== "" ? `#${jerseyNumber} ` : "";
+  return `${jersey}${firstName || ""} ${lastName || ""}`.trim() || "Unknown player";
+}
+
+function renderAwardChip(text, tone = "neutral") {
+  return `<span class="award-chip ${tone}">${escapeHtml(text)}</span>`;
+}
+
+function renderAwardMiniPerson(person, teamName, extra = "") {
+  const full = displayNameFromPerson(person.first_name, person.last_name, person.jersey_number);
+  return `
+    <div class="award-mini-row">
+      ${photoMarkup(person.photo_url, full)}
+      <div>
+        <div style="font-weight:800">${escapeHtml(full)}</div>
+        <div class="award-meta">${escapeHtml(teamName || "Unknown team")}${extra ? ` • ${escapeHtml(extra)}` : ""}</div>
+      </div>
+    </div>`;
+}
+
+function renderAwardPodiumCard(person, rankLabel, tone = "gold", extra = "") {
+  if (!person) {
+    return `
+      <div class="podium-card ${tone}">
+        <div class="podium-rank">${escapeHtml(rankLabel)}</div>
+        <div class="award-meta">No player data yet.</div>
+      </div>`;
+  }
+  const full = displayNameFromPerson(person.firstName, person.lastName, person.jerseyNumber);
+  return `
+    <div class="podium-card ${tone}">
+      <div class="podium-rank">${escapeHtml(rankLabel)}</div>
+      <div class="podium-photo">${photoMarkup(person.photoUrl, full)}</div>
+      <div class="podium-name">${escapeHtml(full)}</div>
+      <div class="podium-team">${escapeHtml(person.teamName || "Unknown team")}</div>
+      <div class="podium-rating">⭐ ${escapeHtml(formatRating(person.avgRating))}</div>
+      ${extra ? `<div class="award-meta" style="margin-top:6px">${escapeHtml(extra)}</div>` : ""}
+    </div>`;
+}
+
+function buildSortedPlayers(playersData) {
+  return [...playersData].sort((a, b) => {
+    const avgDiff = (Number(b.avgRating) || 0) - (Number(a.avgRating) || 0);
+    if (avgDiff) return avgDiff;
+    const ratingCountDiff = (Number(b.ratingCount) || 0) - (Number(a.ratingCount) || 0);
+    if (ratingCountDiff) return ratingCountDiff;
+    const goalDiff = (Number(b.goals) || 0) - (Number(a.goals) || 0);
+    if (goalDiff) return goalDiff;
+    const assistDiff = (Number(b.assists) || 0) - (Number(a.assists) || 0);
+    if (assistDiff) return assistDiff;
+    return `${a.lastName || ""}${a.firstName || ""}`.localeCompare(`${b.lastName || ""}${b.firstName || ""}`);
+  });
+}
+
+function buildBestXI(playersData) {
+  const sorted = buildSortedPlayers(playersData).filter(p => p.ratingCount > 0 || p.appearances > 0);
+  const chosen = [];
+  const chosenIds = new Set();
+  const slots = [["GK", 1], ["DEF", 4], ["MID", 3], ["FW", 3]];
+
+  for (const [position, count] of slots) {
+    const pool = sorted.filter(p => p.position === position && !chosenIds.has(p.pid));
+    for (const player of pool.slice(0, count)) {
+      chosen.push(player);
+      chosenIds.add(player.pid);
+    }
+  }
+
+  if (chosen.length < 11) {
+    for (const player of sorted) {
+      if (chosenIds.has(player.pid)) continue;
+      chosen.push(player);
+      chosenIds.add(player.pid);
+      if (chosen.length === 11) break;
+    }
+  }
+
+  return chosen.slice(0, 11);
+}
+
+function buildBestXIFormation(bestXi, teamMap) {
+  const byPos = {
+    GK: bestXi.filter(p => p.position === "GK"),
+    DEF: bestXi.filter(p => p.position === "DEF"),
+    MID: bestXi.filter(p => p.position === "MID"),
+    FW: bestXi.filter(p => p.position === "FW"),
+  };
+
+  const rows = {
+    GK: byPos.GK.slice(0, 1),
+    DEF: byPos.DEF.slice(0, 4),
+    MID: byPos.MID.slice(0, 3),
+    FW: byPos.FW.slice(0, 3),
+  };
+
+  const fillFromPool = (target, count, used) => {
+    if (target.length >= count) return target.slice(0, count);
+    const pool = bestXi.filter(p => !used.has(p.pid));
+    for (const p of pool) {
+      target.push(p);
+      used.add(p.pid);
+      if (target.length >= count) break;
+    }
+    return target.slice(0, count);
+  };
+
+  const used = new Set();
+  rows.GK.forEach(p => used.add(p.pid));
+  rows.DEF.forEach(p => used.add(p.pid));
+  rows.MID.forEach(p => used.add(p.pid));
+  rows.FW.forEach(p => used.add(p.pid));
+
+  rows.GK = fillFromPool(rows.GK, 1, used);
+  rows.DEF = fillFromPool(rows.DEF, 4, used);
+  rows.MID = fillFromPool(rows.MID, 3, used);
+  rows.FW = fillFromPool(rows.FW, 3, used);
+
+  const card = (p) => {
+    const full = displayNameFromPerson(p.firstName, p.lastName, p.jerseyNumber);
+    return `
+      <div class="formation-card">
+        ${photoMarkup(p.photoUrl, full)}
+        <div class="name">${escapeHtml(full)}</div>
+        <div class="team">${escapeHtml(teamMap.get(Number(p.teamId)) || p.teamName || "Unknown team")}</div>
+        <div class="rating">⭐ ${formatRating(p.avgRating)}</div>
+      </div>`;
+  };
+
+  return `
+    <div class="formation-pitch">
+      <h3>👥 Tournament Best XI</h3>
+      <p class="award-note">Automatically selected from the highest-rated players in the tournament.</p>
+      <div class="formation-row fw">
+        ${rows.FW.map(card).join("") || `<div class="award-meta">No forwards yet.</div>`}
+      </div>
+      <div class="formation-row mid">
+        ${rows.MID.map(card).join("") || `<div class="award-meta">No midfielders yet.</div>`}
+      </div>
+      <div class="formation-row def">
+        ${rows.DEF.map(card).join("") || `<div class="award-meta">No defenders yet.</div>`}
+      </div>
+      <div class="formation-row gk">
+        ${rows.GK.map(card).join("") || `<div class="award-meta">No goalkeeper yet.</div>`}
+      </div>
+    </div>`;
+}
+
+function mapTournamentAwards(rows) {
+  const bySeason = new Map();
+  (rows || []).forEach(row => {
+    const season = String(row.season || "").trim();
+    if (!season) return;
+    if (!bySeason.has(season)) bySeason.set(season, []);
+    bySeason.get(season).push(row);
+  });
+  return bySeason;
+}
+
+function snapshotRowMap(rows) {
+  const map = new Map();
+  (rows || []).forEach(row => {
+    const key = String(row.award_name || "").trim().toLowerCase();
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(row);
+  });
+  return map;
+}
+
+function firstRowFor(map, label) {
+  const rows = map.get(String(label || "").trim().toLowerCase()) || [];
+  return rows[0] || null;
+}
+
+function renderAwardStatCard(title, valueHtml, metaHtml = "", extraHtml = "") {
+  return `
+    <div class="award-stat">
+      <h3>${escapeHtml(title)}</h3>
+      <div class="award-value">${valueHtml}</div>
+      ${metaHtml ? `<div class="award-meta">${metaHtml}</div>` : ""}
+      ${extraHtml}
+    </div>`;
+}
+
+function formatRating(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n.toFixed(2) : "—";
+}
+
+
+
+function formatArchiveWinner(row, playerMap, teamMap) {
+  const player = row.player_id ? playerMap.get(Number(row.player_id)) : null;
+  const teamName = row.team_id ? (teamMap.get(Number(row.team_id)) || "Unknown team") : "";
+  if (player) {
+    return `${displayNameFromPerson(player.first_name, player.last_name, player.jersey_number)} • ${teamMap.get(Number(player.team_id)) || teamName || "Unknown team"}`;
+  }
+  if (row.coach_name) {
+    return `${teamName || "Unknown team"} (${row.coach_name})`;
+  }
+  return teamName || row.coach_name || "—";
+}
+
+function renderAwardsArchive(seasons, seasonBuckets, selectedSeason, playerMap, teamMap) {
+  const archive = document.getElementById("awardsArchive");
+  if (!archive) return;
+
+  if (!seasons.length) {
+    archive.innerHTML = `<div class="archive-card"><h4>No archived seasons yet</h4><div class="archive-meta">Publish a season into <strong>tournament_awards</strong> to build the archive.</div></div>`;
+    return;
+  }
+
+  archive.innerHTML = seasons.map(season => {
+    const rows = seasonBuckets.get(season) || [];
+    const officialRows = rows.filter(row => !String(row.award_name || "").toLowerCase().startsWith("best xi - "));
+    const bestXiRows = rows.filter(row => String(row.award_name || "").toLowerCase().startsWith("best xi - "));
+    const snapshotMap = snapshotRowMap(rows);
+    const highlightKeys = [
+      "Player of the Tournament",
+      "Golden Boot",
+      "Best Coach",
+      "D.O.G. Leader",
+      "Fair Play Leader"
+    ];
+    const highlights = highlightKeys
+      .map(key => {
+        const row = snapshotMap.get(key);
+        if (!row) return null;
+        return `<li><strong>${escapeHtml(key)}:</strong> ${escapeHtml(formatArchiveWinner(row, playerMap, teamMap))}</li>`;
+      })
+      .filter(Boolean)
+      .join("");
+
+    return `
+      <div class="archive-card ${season === selectedSeason ? "active" : ""}">
+        <h4>${escapeHtml(season)}</h4>
+        <div class="archive-meta">
+          ${officialRows.length} official award row(s)<br>
+          ${bestXiRows.length} Best XI slot(s)
+        </div>
+        <div class="archive-meta" style="margin-top:8px;">
+          <ul style="padding-left:18px;margin:0;display:grid;gap:4px;">
+            ${highlights || `<li>No published awards yet.</li>`}
+          </ul>
+        </div>
+        <div class="archive-actions">
+          <button class="archive-btn" type="button" onclick="document.getElementById('awardSeasonSelect').value='${escapeHtml(season)}'; loadAwardsDashboard(); document.getElementById('awards').scrollIntoView({behavior:'smooth'});">View Season</button>
+          <button class="archive-btn secondary" type="button" onclick="printAwards()">Print</button>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function printAwards(){
+  window.print();
+}
+
+function downloadAwardsPdf(){
+  window.print();
+}
+
+
+async function loadAwardsDashboard() {
+  const container = document.getElementById("awardsDashboard");
+  const badge = document.getElementById("awardsSeasonBadge");
+  const seasonSelect = document.getElementById("awardSeasonSelect");
+  if (!container || !badge || !seasonSelect) return;
+
+  container.innerHTML = '<div class="card"><p>Loading awards...</p></div>';
+  badge.textContent = "Loading awards...";
+
+  try {
+    const [players, teams, stats, ratings, events, matchAwards, coaches, snapshots] = await Promise.all([
+      fetchJson(`${SUPABASE_URL}/rest/v1/players?select=id,team_id,first_name,last_name,jersey_number,position,photo_url&order=last_name,first_name`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/teams?select=id,name&order=name`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/player_statistics?select=player_id,team_id,first_name,last_name,appearances,goals,yellow_cards,red_cards`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/player_ratings?select=player_id,total_score,manual_score,automatic_score`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/match_events?select=player_id,event_type,fixture_id`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/match_awards?select=man_of_the_match_player_id,dog_player_id,best_coach_team_id`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/match_coaches?select=team_id,coach_role,coach_name,fixture_id`),
+      fetchJson(`${SUPABASE_URL}/rest/v1/tournament_awards?select=id,season,award_name,player_id,team_id,coach_name&order=id.asc`)
+    ]);
+
+    const teamMap = new Map((teams || []).map(t => [Number(t.id), t.name]));
+    const playerMap = new Map((players || []).map(p => [Number(p.id), p]));
+    const statMap = new Map((stats || []).map(s => [Number(s.player_id), s]));
+
+    const assistsMap = new Map();
+    for (const event of (events || [])) {
+      if (String(event.event_type || "").toUpperCase() !== "ASSIST") continue;
+      const pid = Number(event.player_id);
+      assistsMap.set(pid, (assistsMap.get(pid) || 0) + 1);
+    }
+
+    const ratingMap = new Map();
+    for (const r of (ratings || [])) {
+      const pid = Number(r.player_id);
+      if (!ratingMap.has(pid)) ratingMap.set(pid, { sum: 0, count: 0 });
+      const bucket = ratingMap.get(pid);
+      const total = Number(r.total_score);
+      if (Number.isFinite(total)) {
+        bucket.sum += total;
+        bucket.count += 1;
+      }
+    }
+
+    const motmMap = new Map();
+    const dogMap = new Map();
+    const coachTeamMap = new Map();
+    for (const a of (matchAwards || [])) {
+      const motmPid = Number(a.man_of_the_match_player_id);
+      const dogPid = Number(a.dog_player_id);
+      const coachTeamId = Number(a.best_coach_team_id);
+      if (motmPid) motmMap.set(motmPid, (motmMap.get(motmPid) || 0) + 1);
+      if (dogPid) dogMap.set(dogPid, (dogMap.get(dogPid) || 0) + 1);
+      if (coachTeamId) coachTeamMap.set(coachTeamId, (coachTeamMap.get(coachTeamId) || 0) + 1);
+    }
+
+    const coachNameByTeam = new Map();
+    for (const team of teams || []) {
+      const headCoaches = (coaches || []).filter(c => Number(c.team_id) === Number(team.id) && String(c.coach_role || "").toUpperCase() === "HEAD_COACH" && String(c.coach_name || "").trim());
+      if (!headCoaches.length) continue;
+      const freq = new Map();
+      for (const c of headCoaches) freq.set(c.coach_name, (freq.get(c.coach_name) || 0) + 1);
+      const best = [...freq.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
+      if (best) coachNameByTeam.set(Number(team.id), best[0]);
+    }
+
+    const allIds = new Set([
+      ...playerMap.keys(),
+      ...statMap.keys(),
+      ...ratingMap.keys(),
+      ...assistsMap.keys(),
+      ...motmMap.keys(),
+      ...dogMap.keys()
+    ]);
+
+    const playersData = [...allIds].map(pid => {
+      const p = playerMap.get(pid) || {};
+      const s = statMap.get(pid) || {};
+      const rating = ratingMap.get(pid) || { sum: 0, count: 0 };
+      const appearances = Number(s.appearances ?? rating.count ?? 0) || 0;
+      const goals = Number(s.goals ?? 0) || 0;
+      const yellowCards = Number(s.yellow_cards ?? 0) || 0;
+      const redCards = Number(s.red_cards ?? 0) || 0;
+      const assists = Number(assistsMap.get(pid) || 0) || 0;
+      const avgRating = rating.count ? rating.sum / rating.count : 0;
+      const motm = Number(motmMap.get(pid) || 0) || 0;
+      const dog = Number(dogMap.get(pid) || 0) || 0;
+      const disciplinary = yellowCards + (redCards * 3);
+
+      return {
+        pid,
+        firstName: p.first_name || s.first_name || "",
+        lastName: p.last_name || s.last_name || "",
+        jerseyNumber: p.jersey_number ?? null,
+        photoUrl: p.photo_url || null,
+        teamId: Number(p.team_id || s.team_id || 0) || null,
+        teamName: teamMap.get(Number(p.team_id || s.team_id || 0)) || "Unknown team",
+        position: String(p.position || "").toUpperCase(),
+        appearances,
+        goals,
+        yellowCards,
+        redCards,
+        assists,
+        avgRating,
+        ratingCount: rating.count,
+        motm,
+        dog,
+        disciplinary
+      };
+    });
+
+    const seasonBuckets = mapTournamentAwards(snapshots || []);
+    const seasons = [...seasonBuckets.keys()].sort((a, b) => seasonSortValue(b) - seasonSortValue(a));
+    if (!seasons.length) seasons.push(defaultSeasonLabel());
+
+    const selectedSeason = seasonSelect.value && seasons.includes(seasonSelect.value)
+      ? seasonSelect.value
+      : (seasons.includes(defaultSeasonLabel()) ? defaultSeasonLabel() : seasons[0]);
+
+    seasonSelect.innerHTML = seasons.map(season => `<option value="${escapeHtml(season)}">${escapeHtml(season)}</option>`).join("");
+    seasonSelect.value = selectedSeason;
+
+    const seasonRows = seasonBuckets.get(selectedSeason) || [];
+    const snapshotMap = snapshotRowMap(seasonRows);
+    const officialRowsByAward = seasonRows.filter(row => !String(row.award_name || "").toLowerCase().startsWith("best xi - "));
+    const officialBestXiRows = seasonRows.filter(row => String(row.award_name || "").toLowerCase().startsWith("best xi - "));
+    const officialBestXi = officialBestXiRows.map(row => {
+      const p = playerMap.get(Number(row.player_id)) || {};
+      const stat = statMap.get(Number(row.player_id)) || {};
+      const avg = ratingMap.get(Number(row.player_id))?.count ? (ratingMap.get(Number(row.player_id)).sum / ratingMap.get(Number(row.player_id)).count) : 0;
+      return {
+        pid: Number(row.player_id),
+        firstName: p.first_name || stat.first_name || "",
+        lastName: p.last_name || stat.last_name || "",
+        jerseyNumber: p.jersey_number ?? null,
+        photoUrl: p.photo_url || null,
+        teamId: Number(p.team_id || stat.team_id || row.team_id || 0) || null,
+        teamName: teamMap.get(Number(p.team_id || stat.team_id || row.team_id || 0)) || "Unknown team",
+        position: String(p.position || "").toUpperCase(),
+        appearances: Number(stat.appearances ?? 0) || 0,
+        goals: Number(stat.goals ?? 0) || 0,
+        yellowCards: Number(stat.yellow_cards ?? 0) || 0,
+        redCards: Number(stat.red_cards ?? 0) || 0,
+        assists: Number(assistsMap.get(Number(row.player_id)) || 0) || 0,
+        avgRating: avg,
+        ratingCount: ratingMap.get(Number(row.player_id))?.count || 0,
+        motm: Number(motmMap.get(Number(row.player_id)) || 0) || 0,
+        dog: Number(dogMap.get(Number(row.player_id)) || 0) || 0,
+        disciplinary: Number(stat.yellow_cards ?? 0) + (Number(stat.red_cards ?? 0) * 3)
+      };
+    });
+
+    const byRating = buildSortedPlayers(playersData);
+    const byGoals = [...playersData].sort((a, b) => {
+      const d = (b.goals || 0) - (a.goals || 0);
+      if (d) return d;
+      const ad = (b.assists || 0) - (a.assists || 0);
+      if (ad) return ad;
+      return (b.avgRating || 0) - (a.avgRating || 0);
+    });
+    const byAssists = [...playersData].sort((a, b) => {
+      const d = (b.assists || 0) - (a.assists || 0);
+      if (d) return d;
+      const gd = (b.goals || 0) - (a.goals || 0);
+      if (gd) return gd;
+      return (b.avgRating || 0) - (a.avgRating || 0);
+    });
+    const byMotm = [...playersData].sort((a, b) => (b.motm || 0) - (a.motm || 0) || (b.avgRating || 0) - (a.avgRating || 0));
+    const byDog = [...playersData].sort((a, b) => (b.dog || 0) - (a.dog || 0) || (b.avgRating || 0) - (a.avgRating || 0));
+    const byFairPlay = [...playersData].sort((a, b) => (a.disciplinary || 0) - (b.disciplinary || 0) || (b.avgRating || 0) - (a.avgRating || 0));
+
+    const bestCoach = [...coachTeamMap.entries()].sort((a, b) => {
+      const countDiff = b[1] - a[1];
+      if (countDiff) return countDiff;
+      return (teamMap.get(a[0]) || "").localeCompare(teamMap.get(b[0]) || "");
+    })[0] || null;
+
+    const playerOfTournamentRow = firstRowFor(snapshotMap, "player of the tournament");
+    const goldenBootRow = firstRowFor(snapshotMap, "golden boot");
+    const topPlaymakerRow = firstRowFor(snapshotMap, "top playmaker");
+    const motmLeaderRow = firstRowFor(snapshotMap, "man of the match leader");
+    const dogLeaderRow = firstRowFor(snapshotMap, "d.o.g. leader");
+    const fairPlayRow = firstRowFor(snapshotMap, "fair play leader");
+    const bestCoachRow = firstRowFor(snapshotMap, "best coach");
+
+    const liveByPid = new Map(playersData.map(p => [Number(p.pid), p]));
+
+    const playerOfTournament = playerOfTournamentRow ? liveByPid.get(Number(playerOfTournamentRow.player_id)) || byRating[0] || null : (byRating[0] || null);
+    const topScorer = goldenBootRow ? liveByPid.get(Number(goldenBootRow.player_id)) || byGoals[0] || null : (byGoals[0] || null);
+    const topPlaymaker = topPlaymakerRow ? liveByPid.get(Number(topPlaymakerRow.player_id)) || byAssists[0] || null : (byAssists[0] || null);
+    const motmLeader = motmLeaderRow ? liveByPid.get(Number(motmLeaderRow.player_id)) || byMotm[0] || null : (byMotm[0] || null);
+    const dogLeader = dogLeaderRow ? liveByPid.get(Number(dogLeaderRow.player_id)) || byDog[0] || null : (byDog[0] || null);
+    const fairPlayLeader = fairPlayRow ? liveByPid.get(Number(fairPlayRow.player_id)) || byFairPlay.find(p => p.appearances > 0) || byFairPlay[0] || null : (byFairPlay.find(p => p.appearances > 0) || byFairPlay[0] || null);
+
+    const coachWinner = bestCoachRow
+      ? `${teamMap.get(Number(bestCoachRow.team_id)) || "Unknown team"}${bestCoachRow.coach_name ? ` (${bestCoachRow.coach_name})` : ""}`
+      : (bestCoach ? `${teamMap.get(Number(bestCoach[0])) || "Unknown team"} (${coachNameByTeam.get(Number(bestCoach[0])) || "Coach not set"})` : "—");
+
+    const bestXiLive = buildBestXI(playersData);
+    const bestXi = officialBestXi.length >= 5 ? officialBestXi : bestXiLive;
+
+    const positionLeaders = [
+      ["Best Goalkeeper", byRating.find(p => p.position === "GK") || null],
+      ["Best Defender", byRating.find(p => p.position === "DEF") || null],
+      ["Best Midfielder", byRating.find(p => p.position === "MID") || null],
+      ["Best Forward", byRating.find(p => p.position === "FW") || null]
+    ];
+
+    const podiumCards = byRating.slice(0, 3).map((p, index) => {
+      const tones = ["gold", "silver", "bronze"];
+      const labels = ["🥇 GOLD", "🥈 SILVER", "🥉 BRONZE"];
+      return renderAwardPodiumCard(
+        p,
+        labels[index] || `#${index + 1}`,
+        tones[index] || "neutral",
+        `${Number(p.goals || 0)} goal(s) • ${Number(p.assists || 0)} assist(s)`
+      );
+    }).join("");
+
+    const liveStatsCards = `
+      <div class="award-hero">
+        ${renderAwardStatCard("Player of the Tournament", playerOfTournament ? `${escapeHtml(displayNameFromPerson(playerOfTournament.firstName, playerOfTournament.lastName, playerOfTournament.jerseyNumber))}` : "—", playerOfTournament ? `${escapeHtml(playerOfTournament.teamName)} • ${formatRating(playerOfTournament.avgRating)} avg rating` : "No ratings available yet.", playerOfTournament ? renderAwardMiniPerson(playerOfTournament, playerOfTournament.teamName, "Highest average rating") : "")}
+        ${renderAwardStatCard("Golden Boot", topScorer ? `${escapeHtml(displayNameFromPerson(topScorer.firstName, topScorer.lastName, topScorer.jerseyNumber))}` : "—", topScorer ? `${escapeHtml(topScorer.teamName)} • ${Number(topScorer.goals || 0)} goal(s)` : "No goals recorded yet.", topScorer ? renderAwardMiniPerson(topScorer, topScorer.teamName, "Top scorer") : "")}
+        ${renderAwardStatCard("Top Playmaker", topPlaymaker ? `${escapeHtml(displayNameFromPerson(topPlaymaker.firstName, topPlaymaker.lastName, topPlaymaker.jerseyNumber))}` : "—", topPlaymaker ? `${escapeHtml(topPlaymaker.teamName)} • ${Number(topPlaymaker.assists || 0)} assist(s)` : "No assists recorded yet.", topPlaymaker ? renderAwardMiniPerson(topPlaymaker, topPlaymaker.teamName, "Top assist provider") : "")}
+        ${renderAwardStatCard("Man of the Match Leader", motmLeader ? `${escapeHtml(displayNameFromPerson(motmLeader.firstName, motmLeader.lastName, motmLeader.jerseyNumber))}` : "—", motmLeader ? `${escapeHtml(motmLeader.teamName)} • ${Number(motmLeader.motm || 0)} award(s)` : "No MOTM records yet.", motmLeader ? renderAwardMiniPerson(motmLeader, motmLeader.teamName, "Most MOTM awards") : "")}
+        ${renderAwardStatCard("D.O.G. Leader", dogLeader ? `${escapeHtml(displayNameFromPerson(dogLeader.firstName, dogLeader.lastName, dogLeader.jerseyNumber))}` : "—", dogLeader ? `${escapeHtml(dogLeader.teamName)} • ${Number(dogLeader.dog || 0)} award(s)` : "No D.O.G. records yet.", dogLeader ? renderAwardMiniPerson(dogLeader, dogLeader.teamName, "Dogged player") : "")}
+        ${renderAwardStatCard("Best Coach", coachWinner !== "—" ? escapeHtml(coachWinner) : "—", bestCoachRow ? `Official winner published for ${escapeHtml(selectedSeason)}.` : (bestCoach ? `${Number(bestCoach[1])} award(s)` : "No coach awards yet."), bestCoachRow ? `<div class="award-badges">${renderAwardChip((bestCoachRow.coach_name || coachWinner), "gold")}</div>` : (bestCoach ? `<div class="award-badges">${renderAwardChip((coachNameByTeam.get(Number(bestCoach[0])) || "Coach not set"), "gold")}</div>` : ""))}
+        ${renderAwardStatCard("Fair Play Leader", fairPlayLeader ? `${escapeHtml(displayNameFromPerson(fairPlayLeader.firstName, fairPlayLeader.lastName, fairPlayLeader.jerseyNumber))}` : "—", fairPlayLeader ? `${escapeHtml(fairPlayLeader.teamName)} • ${Number(fairPlayLeader.disciplinary || 0)} discipline points` : "No disciplinary data yet.", fairPlayLeader ? renderAwardMiniPerson(fairPlayLeader, fairPlayLeader.teamName, "Fewest disciplinary points") : "")}
+      </div>`;
+
+    const positionCards = `
+      <div class="award-grid-2">
+        ${positionLeaders.map(([label, p]) => renderAwardStatCard(label, p ? `${escapeHtml(displayNameFromPerson(p.firstName, p.lastName, p.jerseyNumber))}` : "—", p ? `${escapeHtml(p.teamName)} • ${formatRating(p.avgRating)} avg rating` : "No data yet.", p ? renderAwardMiniPerson(p, p.teamName, `${p.position || ""}`.trim()) : "")).join("")}
+      </div>`;
+
+    const topPlayersRows = byRating.slice(0, 10).map((p, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(displayNameFromPerson(p.firstName, p.lastName, p.jerseyNumber))}</strong></td>
+        <td>${escapeHtml(p.teamName)}</td>
+        <td>${formatRating(p.avgRating)}</td>
+        <td>${Number(p.appearances || 0)}</td>
+        <td>${Number(p.goals || 0)}</td>
+        <td>${Number(p.assists || 0)}</td>
+        <td>${Number(p.motm || 0)}</td>
+        <td>${Number(p.dog || 0)}</td>
+      </tr>
+    `).join("");
+
+    const officialRowsHtml = officialRowsByAward.length ? officialRowsByAward.map(row => {
+      const person = row.player_id ? (playerMap.get(Number(row.player_id)) || null) : null;
+      const winner = person ? displayNameFromPerson(person.first_name, person.last_name, person.jersey_number) : (row.coach_name || teamMap.get(Number(row.team_id)) || "—");
+      const teamCoach = row.team_id ? (teamMap.get(Number(row.team_id)) || row.coach_name || "—") : (row.coach_name || "—");
+      return `<tr>
+        <td>${escapeHtml(row.award_name || "Award")}</td>
+        <td>${escapeHtml(winner)}</td>
+        <td>${escapeHtml(teamCoach)}</td>
+      </tr>`;
+    }).join("") : `<tr><td colspan="3">No published awards for ${escapeHtml(selectedSeason)} yet.</td></tr>`;
+
+    const liveOrOfficialNote = officialRowsByAward.length
+      ? `Official winners published for ${escapeHtml(selectedSeason)}.`
+      : `Live leaders are shown because no published awards snapshot exists for ${escapeHtml(selectedSeason)} yet.`;
+
+    const bestXiHtml = buildBestXIFormation(bestXi, teamMap);
+    const awardStatusText = officialRowsByAward.length ? "OFFICIAL AWARDS PUBLISHED" : "LIVE LEADERS";
+    const publishedCount = officialRowsByAward.length || seasonRows.length;
+    const playerCount = byRating.length || playersData.length || 0;
+
+    container.innerHTML = `
+      <div class="award-shell">
+        <div class="card award-banner">
+          <div>
+            <div class="award-kicker">${escapeHtml(awardStatusText)}</div>
+            <h3>Awards for ${escapeHtml(selectedSeason)}</h3>
+            <p>${liveOrOfficialNote}</p>
+          </div>
+          <div class="award-badges">
+            ${renderAwardChip(awardStatusText, officialRowsByAward.length ? "gold" : "neutral")}
+            ${renderAwardChip(`${publishedCount} published row(s)`, "neutral")}
+            ${renderAwardChip(`${playerCount} rated player(s)`, "neutral")}
+            ${renderAwardChip(`${bestXi.length} Best XI slots`, "neutral")}
+          </div>
+        </div>
+
+        <div class="award-podium">
+          ${podiumCards || `<div class="podium-card"><div class="podium-rank">No podium yet</div><div class="award-meta">No player ratings available.</div></div>`}
+        </div>
+
+        <div class="award-collection">
+          <div class="award-section">
+            <div class="award-section-head">
+              <div>
+                <h3>Major Awards</h3>
+                <p class="muted">The tournament's headline winners and live leaders.</p>
+              </div>
+            </div>
+            ${liveStatsCards}
+          </div>
+
+          <div class="award-section">
+            <div class="award-section-head">
+              <div>
+                <h3>Position Awards</h3>
+                <p class="muted">Best goalkeeper, defender, midfielder and forward.</p>
+              </div>
+            </div>
+            ${positionCards}
+          </div>
+
+          <div class="award-section">
+            <div class="award-section-head">
+              <div>
+                <h3>Top 10 by Average Rating</h3>
+                <p class="muted">The most consistent performers across the tournament.</p>
+              </div>
+            </div>
+            <div class="award-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Avg Rating</th>
+                    <th>Apps</th>
+                    <th>Goals</th>
+                    <th>Assists</th>
+                    <th>MOTM</th>
+                    <th>D.O.G.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${topPlayersRows || `<tr><td colspan="9">No player ratings yet.</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="award-section">
+            <div class="award-section-head">
+              <div>
+                <h3>Tournament Best XI</h3>
+                <p class="muted">Selected from live ratings or the published official snapshot.</p>
+              </div>
+            </div>
+            ${bestXiHtml}
+          </div>
+
+          <div class="award-section">
+            <div class="award-section-head">
+              <div>
+                <h3>Official Published Awards</h3>
+                <p class="muted">Published winners are read from the tournament_awards table.</p>
+              </div>
+            </div>
+            <div class="award-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Award</th>
+                    <th>Winner</th>
+                    <th>Team / Coach</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${officialRowsHtml}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    renderAwardsArchive(seasons, seasonBuckets, selectedSeason, playerMap, teamMap);
+    badge.textContent = officialRowsByAward.length ? `Official • ${selectedSeason}` : `Live • ${selectedSeason}`;
+  } catch (error) {
+    console.error("Awards loading error:", error);
+    badge.textContent = "Awards unavailable";
+    container.innerHTML = `<div class="card"><p>Unable to load awards.</p><p class="muted">${escapeHtml(error.message)}</p></div>`;
+  }
+}
+
+function closePlayerHistory(event){
+    if(event && event.target && event.target.id!=="playerHistoryModal") return;
+    document.getElementById("playerHistoryModal").style.display="none";
+  }
+
+  loadMatchCentre();
+loadVisitorFixtures();
+loadVisitorPlayers();
+loadPlayerStatsTable();
+loadTopScorers();
+loadTeamStatistics();
+loadAwardsDashboard();
+
+setInterval(() => {
+    loadMatchCentre();
+    loadVisitorFixtures();
+    loadVisitorPlayers();
+    loadPlayerStatsTable();
+    loadTopScorers();
+    loadTeamStatistics();
+    loadAwardsDashboard();
+}, 30000);
+</script>
+
+</body>
+</html>
